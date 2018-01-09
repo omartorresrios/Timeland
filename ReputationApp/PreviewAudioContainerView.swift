@@ -1,0 +1,142 @@
+//
+//  PreviewAudioContainerView.swift
+//  ReputationApp
+//
+//  Created by Omar Torres on 31/12/17.
+//  Copyright © 2017 OmarTorres. All rights reserved.
+//
+
+import UIKit
+
+class PreviewAudioContainerView: UIView {
+    
+    let fullnameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
+        label.textAlignment = .left
+        return label
+    }()
+    
+    let profileImageView: CustomImageView = {
+        let iv = CustomImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.layer.cornerRadius = 20
+        return iv
+    }()
+    
+    lazy var playButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(named: "play")
+        button.setImage(image, for: UIControlState())
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .black
+        //        button.addTarget(self, action: #selector(handlePause), for: .touchUpInside)
+        button.addTarget(self, action: #selector(playAudio), for: .touchUpInside)
+        return button
+    }()
+    
+    var playing: Bool = false {
+        willSet {
+            if newValue != playing {
+                if newValue {
+                    playButton.setImage(UIImage(named: "pause"), for: UIControlState())
+                } else {
+                    playButton.setImage(UIImage(named: "play"), for: UIControlState())
+                }
+            }
+        }
+    }
+    
+    let progressView: UIProgressView = {
+        let progress = UIProgressView()
+        return progress
+    }()
+    
+    lazy var audioSlider: UISlider = {
+        let slider = UISlider()
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.minimumTrackTintColor = .red
+        slider.maximumTrackTintColor = .gray
+        slider.setThumbImage(UIImage(named: "thumb"), for: UIControlState())
+        //        slider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        
+        return slider
+    }()
+    
+    let audioLengthLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "0:00"
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textAlignment = .right
+        return label
+    }()
+    
+    let currentTimeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "00:00"
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        return label
+    }()
+    
+    func setupViews() {
+        
+        addSubview(fullnameLabel)
+        fullnameLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        addSubview(playButton)
+        playButton.anchor(top: fullnameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
+        
+        addSubview(currentTimeLabel)
+        currentTimeLabel.anchor(top: nil, left: playButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 50, height: 24)
+        currentTimeLabel.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
+        
+        addSubview(progressView)
+        progressView.anchor(top: nil, left: currentTimeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        progressView.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
+        
+        addSubview(audioLengthLabel)
+        audioLengthLabel.anchor(top: nil, left: progressView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 50, height: 24)
+        audioLengthLabel.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
+        
+    }
+    
+    //    func handleSliderChange() {
+    //        print(audioSlider.value)
+    //
+    //        if let duration = player?.currentItem?.duration {
+    //            let totalSeconds = CMTimeGetSeconds(duration)
+    //
+    //            let value = Float64(audioSlider.value) * totalSeconds
+    //
+    //            let seekTime = CMTime(value: Int64(value), timescale: 1)
+    //
+    //            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+    //                //perhaps do something later here
+    //            })
+    //        }
+    //    }
+    
+    var playOrPauseAudioAction : ((_ view: PreviewAudioContainerView, _ progressView: UIProgressView) -> Void)?
+    
+    func playAudio() {
+        playOrPauseAudioAction?(self, progressView)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        backgroundColor = .white
+        setupViews()
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
