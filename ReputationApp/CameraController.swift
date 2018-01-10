@@ -176,7 +176,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         swiftyCamButton.delegate = self
-        print("CONOOOO")
         swiftyButton()
     }
     

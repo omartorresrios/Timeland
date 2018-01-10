@@ -16,7 +16,8 @@ class UserReviewsCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .black
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
-        label.textAlignment = .left
+        label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
     
@@ -24,7 +25,7 @@ class UserReviewsCell: UICollectionViewCell {
         let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 20
+        iv.layer.cornerRadius = 25
         return iv
     }()
     
@@ -87,16 +88,52 @@ class UserReviewsCell: UICollectionViewCell {
         return label
     }()
     
+    let timeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 12)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.text = "hoy"
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         addSubview(profileImageView)
-        profileImageView.anchor(top: topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 40, height: 40)
+        profileImageView.anchor(top: topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
         profileImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
+        
         addSubview(fullnameLabel)
-        fullnameLabel.anchor(top: profileImageView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        fullnameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+        fullnameLabel.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
+        fullnameLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+        addSubview(timeLabel)
+        timeLabel.anchor(top: fullnameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
+        timeLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+//        let separatorView = UIView()
+//        separatorView.backgroundColor = UIColor(white: 0, alpha: 0.1)
+//        addSubview(separatorView)
+//        separatorView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0.5)
+//        
+        
+        //        addSubview(fullnameLabel)
+//        fullnameLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 4, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
+//        fullnameLabel.backgroundColor = .yellow
+//        fullnameLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
+        
+        
+//        let stackView = UIStackView(arrangedSubviews: [fullnameLabel, timeLabel])
+//         fullnameLabel.sizeToFit()
+//        timeLabel.sizeToFit()
+//        stackView.axis = .vertical
+//        stackView.spacing = 0
+//        stackView.distribution = .fillProportionally
+//
+//        addSubview(stackView)
+//        stackView.anchor(top: profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: profileImageView.bottomAnchor, right: rightAnchor, paddingTop: 4, paddingLeft: 8, paddingBottom: 4, paddingRight: 8, width: 0, height: 0)
         
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(previewAudio))
