@@ -17,7 +17,7 @@ class UserSearchHeader: UICollectionViewCell {
     }()
     
     let addPeopleButton: UIButton = {
-        let ap = UIButton()
+        let ap = UIButton(type: .system)
         ap.setTitle("¿No lo encontraste?, agrégalo (+5 pts)  👉", for: .normal)
         ap.titleLabel?.font = UIFont(name: "SFUIDisplay-Medium", size: 15)
         ap.isUserInteractionEnabled = true

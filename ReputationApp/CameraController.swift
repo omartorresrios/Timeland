@@ -62,7 +62,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     }()
     
     let sendButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.backgroundColor = .yellow
         button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
         return button

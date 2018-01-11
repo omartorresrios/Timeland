@@ -23,6 +23,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     var durations = [String]()
     let userFeedCell = "userFeedCell"
     var eventVideos = [Event]()
+    var stories = [[String: Any]]()
     
     let closeView: UIButton = {
         let button = UIButton(type: .system)
@@ -46,8 +47,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserFeedCell.self, forCellWithReuseIdentifier: userFeedCell)
         collectionView?.isPagingEnabled = false
         
-//        let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler(_:)))
-//        view.addGestureRecognizer(tapGesture)
+        
         
         loadUserEvents()
         
@@ -101,6 +101,10 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                     print("\nTHE USER EVENTS: \(JSON)\n")
                     
                     for item in JSON {
+                        guard let storieDictionary = item as? [String: Any] else { return }
+                        print("storieDictionary: \(storieDictionary)")
+                        
+                        self.stories.append(storieDictionary)
                         
                         let event_url = item["event_url"] as! String
                         
@@ -129,9 +133,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                             self.images.append(file)
                             self.urls.append(finalEventUrl)
                             
-                            
-                            
-                            
                             self.collectionView?.reloadData()
                             
                         }
@@ -141,32 +142,34 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
-//    // define a variable to store initial touch position
-//    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
-//
-//    func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
-//        let touchPoint = sender.location(in: self.view?.window)
-//
-//        if sender.state == UIGestureRecognizerState.began {
-//            initialTouchPoint = touchPoint
-//        } else if sender.state == UIGestureRecognizerState.changed {
-//            if touchPoint.y - initialTouchPoint.y > 0 {
-//                self.view.frame = CGRect(x: 0, y: touchPoint.y - initialTouchPoint.y, width: self.view.frame.size.width, height: self.view.frame.size.height)
-//            }
-//        } else if sender.state == UIGestureRecognizerState.ended || sender.state == UIGestureRecognizerState.cancelled {
-//            if touchPoint.y - initialTouchPoint.y > 100 {
-//                self.dismiss(animated: true, completion: nil)
-//            } else {
-//                UIView.animate(withDuration: 0.3, animations: {
-//                    self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
-//                })
-//            }
-//        }
-//    }
+    // define a variable to store initial touch position
+    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
+
+    func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
+        let touchPoint = sender.location(in: self.previewVideoContainerView.view?.window)
+
+        if sender.state == UIGestureRecognizerState.began {
+            initialTouchPoint = touchPoint
+        } else if sender.state == UIGestureRecognizerState.changed {
+            if touchPoint.y - initialTouchPoint.y > 0 {
+                self.previewVideoContainerView.view.frame = CGRect(x: 0, y: touchPoint.y - initialTouchPoint.y, width: self.previewVideoContainerView.view.frame.size.width, height: self.previewVideoContainerView.view.frame.size.height)
+            }
+        } else if sender.state == UIGestureRecognizerState.ended || sender.state == UIGestureRecognizerState.cancelled {
+            if touchPoint.y - initialTouchPoint.y > 100 {
+                self.previewVideoContainerView.dismiss(animated: true, completion: nil)
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.previewVideoContainerView.view.frame = CGRect(x: 0, y: 0, width: self.previewVideoContainerView.view.frame.size.width, height: self.previewVideoContainerView.view.frame.size.height)
+                })
+            }
+        }
+    }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
     }
+    
+    let previewVideoContainerView = PreviewVideoContainerView()
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
@@ -174,15 +177,11 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         let image = self.images[indexPath.item].absoluteString!
         let url = self.urls[indexPath.item]
         let event = eventVideos[indexPath.item]
-        print("events: ", event.duration)
+        let storie = stories[indexPath.item]
         
+        let createdAt = storie["created_at"] as! String
+        let fullname = storie["user_fullname"] as! String
         
-        
-        
-        
-        
-        
-
         if let url = URL(string: image) {
             let asset:AVAsset = AVAsset(url: url)
             
@@ -206,6 +205,8 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 let minutes = (duration / 60) % 60
                 cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
                 
+                
+                
             } catch let error as NSError {
                 print("ERROR: \(error)")
                 cell.photoImageView.image = nil
@@ -215,11 +216,56 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         }
         
         cell.goToWatch = {
+            
+            
+            self.present(self.previewVideoContainerView, animated: false, completion: nil)
+            
             let videoURL = URL(string: url)
             let player = AVPlayer(url: videoURL!)
             let playerLayer = AVPlayerLayer(player: player)
-            playerLayer.frame = self.view.bounds
-            self.view.layer.addSublayer(playerLayer)
+            
+            playerLayer.frame = self.previewVideoContainerView.view.bounds
+            
+            self.previewVideoContainerView.view.layer.addSublayer(playerLayer)
+            
+            playerLayer.zPosition = -5
+            
+            // deleting the Z in the final
+            let zEndIndex = createdAt.index(createdAt.endIndex, offsetBy: -1)
+            let finalWihtOutZ = createdAt.substring(to: zEndIndex)
+
+            // deleting the last 3 characters
+            let last4endIndex = finalWihtOutZ.index(finalWihtOutZ.endIndex, offsetBy: -4)
+            let finalWihtOut4 = finalWihtOutZ.substring(to: last4endIndex)
+
+            // adding the Z to the end
+            let finalCreatedAt = finalWihtOut4 + "Z"
+
+            let dateFormatter = DateFormatter()
+            let tempLocale = dateFormatter.locale // save locale temporarily
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            let date = dateFormatter.date(from: finalCreatedAt)!
+            dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+            dateFormatter.locale = tempLocale // reset the locale
+            let dateString = dateFormatter.string(from: date)
+            print("EXACT_DATE : \(dateString)")
+            
+            
+            
+            let timeLabel = UILabel()
+            timeLabel.tintColor = .black
+            timeLabel.backgroundColor = .yellow
+            timeLabel.text = date.timeAgoDisplay()
+            
+            self.previewVideoContainerView.videoLengthLabel.setTitle(timeLabel.text, for: .normal)
+            self.previewVideoContainerView.userNameLabel.text = fullname
+            
+            let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
+            self.previewVideoContainerView.view.addGestureRecognizer(tapGesture)
+            
+            
+            
             player.play()
         }
         
@@ -235,8 +281,8 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (view.frame.width - 24) / 2
-        return CGSize(width: width, height: width + 80)
+        let width = (view.frame.width - 32) / 3
+        return CGSize(width: width, height: width + 60)
     }
     
     

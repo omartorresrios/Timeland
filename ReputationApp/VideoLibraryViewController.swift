@@ -19,7 +19,7 @@ class VideoLibraryViewController: UICollectionViewController, UICollectionViewDe
     }()
     
     let shareButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.backgroundColor = .yellow
         return button
     }()

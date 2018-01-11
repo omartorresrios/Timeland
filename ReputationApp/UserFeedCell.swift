@@ -21,7 +21,7 @@ class UserFeedCell: UICollectionViewCell {
     
     let playView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 30
+        view.layer.cornerRadius = 20
         view.backgroundColor = UIColor(white: 1, alpha: 0.3)
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
@@ -39,10 +39,10 @@ class UserFeedCell: UICollectionViewCell {
     let videoLengthLabel: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+        button.contentEdgeInsets = UIEdgeInsets(top: 3, left: 7, bottom: 3, right: 7)
         button.backgroundColor = .black
         button.layer.cornerRadius = 5
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         button.setTitle("0:00", for: .normal)
         button.tintColor = .white
         return button
@@ -61,13 +61,13 @@ class UserFeedCell: UICollectionViewCell {
         videoLengthLabel.anchor(top: photoImageView.topAnchor, left: photoImageView.leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 4, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         photoImageView.addSubview(playView)
-        playView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 60, height: 60)
+        playView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 40, height: 40)
         playView.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor).isActive = true
         playView.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor).isActive = true
         playView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(watchVideo)))
         
         playView.addSubview(playButton)
-        playButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
+        playButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 15, height: 15)
         playButton.centerXAnchor.constraint(equalTo: playView.centerXAnchor).isActive = true
         playButton.centerYAnchor.constraint(equalTo: playView.centerYAnchor).isActive = true
         playButton.addTarget(self, action: #selector(watchVideo), for: .touchUpInside)

@@ -24,6 +24,8 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
     var reviewAudios = [Review]()
     var tap = UITapGestureRecognizer()
     
+    let viewGeneral = UIView()
+    
     let messageLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -55,6 +57,10 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
 //        let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler(_:)))
 //        view.addGestureRecognizer(tapGesture)
         
+        tap = UITapGestureRecognizer(target: self, action: #selector(dismissContainerView))
+        view.addGestureRecognizer(tap)
+        tap.delegate = self
+        
         AudioBot.prepareForNormalRecord()
         
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissContainerView))
@@ -74,19 +80,16 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func dismissContainerView() {
+        viewGeneral.removeFromSuperview()
         containerView.removeFromSuperview()
+        view.removeGestureRecognizer(tap)
         containerView.playing = false
         AudioBot.pausePlay()
         containerView.audioLengthLabel.text = "0:00"
         containerView.progressView.progress = 0
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: containerView))!{
-            return false
-        }
-        return true
-    }
+    
     
     //    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     //        let cell = UserReviewsCell()
@@ -203,6 +206,25 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
+    func setupReviewInfoViews() {
+        view.addSubview(viewGeneral)
+        viewGeneral.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        viewGeneral.backgroundColor = .black
+        
+        viewGeneral.addSubview(containerView)
+        containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
+        containerView.backgroundColor = .white
+        containerView.layer.cornerRadius = 5
+        containerView.centerYAnchor.constraint(equalTo: viewGeneral.centerYAnchor).isActive = true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: containerView))!{
+            return false
+        }
+        return true
+    }
+    
 //    // define a variable to store initial touch position
 //    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
 //    
@@ -280,6 +302,8 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         cell.timeLabel.text = date.timeAgoDisplay()
 
         cell.goToListen = {
+            
+            self.setupReviewInfoViews()
 
             self.containerView.fullnameLabel.text = fullName
 

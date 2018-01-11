@@ -20,7 +20,7 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
     var userDictionary = [String: Any]()
     
     let storiesOptionButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.backgroundColor = .red
         button.setTitle("Momentos", for: .normal)
         button.addTarget(self, action: #selector(showUserStoriesView), for: .touchUpInside)
@@ -29,7 +29,7 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
     }()
     
     let reviewsOptionButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.backgroundColor = .red
         button.setTitle("Reseñas", for: .normal)
         button.addTarget(self, action: #selector(showUserReviewsView), for: .touchUpInside)

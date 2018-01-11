@@ -26,7 +26,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     var currentUserDic = [String: Any]()
     
     var startRecordButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(startRecord), for: .touchUpInside)
         button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
@@ -39,7 +39,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     }()
     
     var playAudioButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(playAudio), for: .touchUpInside)
         button.setImage(#imageLiteral(resourceName: "play").withRenderingMode(.alwaysTemplate), for: .normal)
@@ -47,7 +47,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     }()
     
     var sendAudioButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "send").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .yellow
         return button
