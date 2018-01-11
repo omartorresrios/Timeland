@@ -37,6 +37,7 @@
 		A07B95901F2E9062008E9EA0 /* HomeReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07B958F1F2E9062008E9EA0 /* HomeReviewCell.swift */; };
 		A07B95921F2E90B5008E9EA0 /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07B95911F2E90B5008E9EA0 /* Review.swift */; };
 		A09626A720028E8500D2CF06 /* UserFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09626A620028E8500D2CF06 /* UserFeedCell.swift */; };
+		A0991FDC200707A100C00027 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0991FDB2007078200C00027 /* Event.swift */; };
 		A09EEB721F869BF2009836DC /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09EEB711F869BF2009836DC /* SegueFromLeft.swift */; };
 		A09EEB7D1F86BA09009836DC /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09EEB7C1F86BA09009836DC /* FeedViewController.swift */; };
 		A09EEB7F1F86BA29009836DC /* VideoLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09EEB7E1F86BA29009836DC /* VideoLibraryViewController.swift */; };
@@ -107,6 +108,7 @@
 		A07B958F1F2E9062008E9EA0 /* HomeReviewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeReviewCell.swift; sourceTree = "<group>"; };
 		A07B95911F2E90B5008E9EA0 /* Review.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
 		A09626A620028E8500D2CF06 /* UserFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFeedCell.swift; sourceTree = "<group>"; };
+		A0991FDB2007078200C00027 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		A09EEB711F869BF2009836DC /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
 		A09EEB7C1F86BA09009836DC /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		A09EEB7E1F86BA29009836DC /* VideoLibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoLibraryViewController.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				A07B3C411EDB846D00F10657 /* User.swift */,
 				A035D7E51FF927D50063706B /* User1.swift */,
 				A07B95911F2E90B5008E9EA0 /* Review.swift */,
+				A0991FDB2007078200C00027 /* Event.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -610,6 +613,7 @@
 				A0EC6BF81FA11F52005384D7 /* VideoLibraryContentCell.swift in Sources */,
 				A0DD9D751FE189450080FA91 /* CacheManager.swift in Sources */,
 				A07B3C3B1ED91EDB00F10657 /* SignUpController.swift in Sources */,
+				A0991FDC200707A100C00027 /* Event.swift in Sources */,
 				A0D0542B1FDB54D000C738F5 /* MyProfileCell.swift in Sources */,
 				A039853B1F8BEECE0025A7AB /* PreviewVideoContainerView.swift in Sources */,
 				A0D0542E1FDB6BF400C738F5 /* SnapContainerViewController.swift in Sources */,

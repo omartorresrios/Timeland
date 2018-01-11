@@ -110,13 +110,13 @@ class DataService {
         }
     }
     
-    func shareVideo(authToken: String, videoCaption: UITextView, videoUrl: URL) {
+    func shareVideo(authToken: String, videoCaption: UITextView, videoUrl: URL, duration: String) {
         guard let caption = videoCaption.text else { return }
         
         // Set Authorization header
         let header = ["Authorization": "Token token=\(authToken)"]
         
-        let parameters = ["description": caption] as [String : Any]
+        let parameters = ["description": caption, "duration": duration] as [String : Any]
         
         let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/writeEvent")!
         

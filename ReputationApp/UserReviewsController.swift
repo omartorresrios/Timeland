@@ -32,7 +32,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
     }()
     
     let closeView: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .gray
         return button

@@ -98,7 +98,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             let authToken = userToken["authenticationToken"] as! String
             print("the current user token: \(userToken)")
             
-            DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!)
+            DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!)
             
             guard let data = NSData(contentsOf: videoUrl!) else {
                 return
@@ -159,7 +159,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         allowAutoRotate = false
         audioEnabled = true
         
-        
         let defaults = UserDefaults.standard
         
         if defaults.object(forKey: "userLoggedIn") == nil {
@@ -211,11 +210,15 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     var timerTest: Timer?
     var counter = 20
+    var startTime: Double = 0
+    var time: Double = 0
+    var finalDuration: String?
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
         print("recording video")
         
-        timerTest = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        startTime = Date().timeIntervalSinceReferenceDate
+        timerTest = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(update), userInfo: nil, repeats: true)
         
         swiftyCamButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
         UIView.animate(withDuration: 0.4) {
@@ -229,6 +232,12 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             print("\(counter) seconds to the end of the world")
             counter -= 1
         }
+        time = Date().timeIntervalSinceReferenceDate - startTime
+        
+        let timeString = String(format: "%.11f", time)
+        
+        self.finalDuration = timeString
+        
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
