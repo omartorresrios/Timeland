@@ -28,20 +28,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UIApplication.shared.statusBarStyle = .lightContent
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        
-        let left = storyboard.instantiateViewController(withIdentifier: "left")
-        let middle = storyboard.instantiateViewController(withIdentifier: "middle")
-        let right = storyboard.instantiateViewController(withIdentifier: "right")
-        
-        let snapContainer = SnapContainerViewController.containerViewWith(left,
-                                                                          middleVC: middle,
-                                                                          rightVC: right)
-        
-        self.window?.rootViewController = snapContainer
-        self.window?.makeKeyAndVisible()
-        
+        logUser()
         return true
+    }
+    
+    func logUser() {
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "userLoggedIn") != nil {
+            
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            let left = storyboard.instantiateViewController(withIdentifier: "left")
+            let middle = storyboard.instantiateViewController(withIdentifier: "middle")
+            let right = storyboard.instantiateViewController(withIdentifier: "right")
+            
+            let snapContainer = SnapContainerViewController.containerViewWith(left,
+                                                                              middleVC: middle,
+                                                                              rightVC: right)
+            
+            self.window?.rootViewController = snapContainer
+            self.window?.makeKeyAndVisible()
+            
+        }
     }
     
     func reachabilityChanged(note: NSNotification) {

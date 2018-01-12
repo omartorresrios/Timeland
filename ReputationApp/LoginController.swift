@@ -86,7 +86,6 @@ class LoginController: UIViewController {
         print("currentUserId recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserId")!)")
         print("currentUserName recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserName")!)")
         
-        self.dismiss(animated: true, completion: nil)
     }
     
     let loginButton: UIButton = {
@@ -152,8 +151,15 @@ class LoginController: UIViewController {
                             print("authToken: \(authToken)")
                             print("userId: \(userId)")
                             
+                            self.view.endEditing(true)
+                            
+                            let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                            appDel.logUser()
+                            
                         }
                     }
+                    
+                
                     
                 case .failure(let encodingError):
                     print("Alamofire proccess failed", encodingError)

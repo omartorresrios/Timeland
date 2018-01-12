@@ -59,7 +59,7 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("MyProfileController loaded")
         // Do any additional setup after loading the view, typically from a nib.
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
@@ -90,11 +90,28 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
         
         userSelected = user
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log out", style: .plain, target: self, action: #selector(handleLogout))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear"), style: .plain, target: self, action: #selector(handleSheetAction))
         
         setupOptionsButtons()
         
         //        loadEvents()
+    }
+    
+    func handleSheetAction() {
+        let actionSheetController = UIAlertController()
+        
+        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        let saveActionButton = UIAlertAction(title: "logout", style: .default) { (action) in
+            self.handleLogout()
+        }
+        actionSheetController.addAction(saveActionButton)
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+        
     }
     
     fileprivate func setupOptionsButtons() {

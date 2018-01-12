@@ -161,14 +161,14 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         
         let defaults = UserDefaults.standard
         
-        if defaults.object(forKey: "userLoggedIn") == nil {
-            //show if not logged in
-            DispatchQueue.main.async {
-                let loginController = LoginController()
-                let navController = UINavigationController(rootViewController: loginController)
-                self.present(navController, animated: true, completion: nil)
-            }
-        }
+//        if defaults.object(forKey: "userLoggedIn") == nil {
+//            //show if not logged in
+//            DispatchQueue.main.async {
+//                let loginController = LoginController()
+//                let navController = UINavigationController(rootViewController: loginController)
+//                self.present(navController, animated: true, completion: nil)
+//            }
+//        }
         
     }
     
