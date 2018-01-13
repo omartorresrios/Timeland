@@ -27,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         UIApplication.shared.statusBarStyle = .lightContent
-        
         logUser()
         return true
     }
@@ -46,9 +45,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                               middleVC: middle,
                                                                               rightVC: right)
             
-            self.window?.rootViewController = snapContainer
+            showViewControllerWith(newViewController: snapContainer, usingAnimation: AnimationType.ANIMATE_UP)
+//            self.window?.rootViewController = snapContainer
             self.window?.makeKeyAndVisible()
             
+        }
+    }
+    
+    //Declare enum
+    enum AnimationType{
+        case ANIMATE_RIGHT
+        case ANIMATE_LEFT
+        case ANIMATE_UP
+        case ANIMATE_DOWN
+    }
+    // Create Function...
+    
+    func showViewControllerWith(newViewController:UIViewController, usingAnimation animationType:AnimationType)
+    {
+        
+        let currentViewController = UIApplication.shared.delegate?.window??.rootViewController
+        let width = currentViewController?.view.frame.size.width;
+        let height = currentViewController?.view.frame.size.height;
+        
+        var previousFrame:CGRect?
+        var nextFrame:CGRect?
+        
+        switch animationType
+        {
+        case .ANIMATE_LEFT:
+            previousFrame = CGRect(x: width!-1, y: 0.0, width: width!, height: height!)
+            nextFrame = CGRect(x: -width!, y: 0.0, width: width!, height: height!)
+        case .ANIMATE_RIGHT:
+            previousFrame = CGRect(x: -width!+1, y: 0.0, width: width!, height: height!)
+            nextFrame = CGRect(x: width!, y: 0.0, width: width!, height: height!)
+        case .ANIMATE_UP:
+            previousFrame = CGRect(x: 0.0, y: height!-1, width: width!, height: height!)
+            nextFrame = CGRect(x: 0.0, y: -height!+1, width: width!, height: height!)
+        case .ANIMATE_DOWN:
+            previousFrame = CGRect(x: 0.0, y: -height!+1, width: width!, height: height!)
+            nextFrame = CGRect(x: 0.0, y: height!-1, width: width!, height: height!)
+        }
+        
+        newViewController.view.frame = previousFrame!
+        UIApplication.shared.delegate?.window??.addSubview(newViewController.view)
+        UIView.animate(withDuration: 0.0,
+                                   animations: { () -> Void in
+                                    newViewController.view.frame = (currentViewController?.view.frame)!
+                                    currentViewController?.view.frame = nextFrame!
+                                    
+        })
+        { (fihish:Bool) -> Void in
+            UIApplication.shared.delegate?.window??.rootViewController = newViewController
         }
     }
     

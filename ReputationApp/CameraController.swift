@@ -173,15 +173,16 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return button
     }()
     
-    func setupViewSend() {
+    func setupBlurView() {
         view.addSubview(blurView)
         blurView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        
+    }
+    
+    func setupSendButton() {
         blurView.addSubview(sendButton)
         sendButton.anchor(top: nil, left: blurView.leftAnchor, bottom: nil, right: blurView.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
         sendButton.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
         sendButton.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
-
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
@@ -194,7 +195,11 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             self.circleView.removeFromSuperview()
             self.swiftyCamButton.removeFromSuperview()
             
-            self.setupViewSend()
+            self.setupBlurView()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.setupSendButton()
         }
     }
     
