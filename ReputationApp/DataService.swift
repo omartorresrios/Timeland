@@ -110,7 +110,7 @@ class DataService {
         }
     }
     
-    func shareVideo(authToken: String, videoCaption: UITextView, videoUrl: URL, duration: String) {
+    func shareVideo(authToken: String, videoCaption: UITextView, videoUrl: URL, duration: String, completion: @escaping (Bool) -> ()) {
         guard let caption = videoCaption.text else { return }
         
         // Set Authorization header
@@ -141,11 +141,14 @@ class DataService {
                     
                     if let JSON = response.result.value {
                         print("JSON: \(JSON)")
+                        print("send video successfully")
+                        completion(true)
                     }
                 }
                 
             case .failure(let encodingError):
                 print("Alamofire proccess failed", encodingError)
+                completion(false)
             }
         })
     }

@@ -77,6 +77,23 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     var finalDuration: TimeInterval?
     
+    func compressVideo(inputURL: URL, outputURL: URL, handler:@escaping (_ exportSession: AVAssetExportSession?)-> Void) {
+        let urlAsset = AVURLAsset(url: inputURL, options: nil)
+        guard let exportSession = AVAssetExportSession(asset: urlAsset, presetName: AVAssetExportPresetHighestQuality) else {
+            handler(nil)
+            
+            return
+        }
+        
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = AVFileTypeQuickTimeMovie
+        exportSession.shouldOptimizeForNetworkUse = true
+        print("abusivo: ", exportSession.presetName)
+        exportSession.exportAsynchronously { () -> Void in
+            handler(exportSession)
+        }
+    }
+    
     func loadUserEvents() {
         // Retreieve Auth_Token from Keychain
         if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
@@ -117,6 +134,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                         let endIndex = event_url.index(event_url.endIndex, offsetBy: -11)
                         let finalEventUrl = event_url.substring(to: endIndex)
                         
+                        
                         let cache = Shared.dataCache
                         let URL = NSURL(string: finalEventUrl)!
                         
@@ -125,14 +143,12 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                         print("event's video: ", eventVideo.duration)
                         
                         cache.fetch(URL: URL as URL).onSuccess { (data) in
-                            
                             let path = NSURL(string: DiskCache.basePath())!.appendingPathComponent("shared-data/original")
                             let cached = DiskCache(path: (path?.absoluteString)!).path(forKey: String(describing: URL))
                             let file = NSURL(fileURLWithPath: cached)
-                            
-                            self.images.append(file)
                             self.urls.append(finalEventUrl)
                             
+                            self.images.append(file)
                             self.collectionView?.reloadData()
                             
                         }
@@ -157,6 +173,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         } else if sender.state == UIGestureRecognizerState.ended || sender.state == UIGestureRecognizerState.cancelled {
             if touchPoint.y - initialTouchPoint.y > 100 {
                 self.previewVideoContainerView.dismiss(animated: true, completion: nil)
+                self.player.pause()
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
                     self.previewVideoContainerView.view.frame = CGRect(x: 0, y: 0, width: self.previewVideoContainerView.view.frame.size.width, height: self.previewVideoContainerView.view.frame.size.height)
@@ -170,6 +187,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     }
     
     let previewVideoContainerView = PreviewVideoContainerView()
+    var player = AVPlayer()
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
@@ -182,31 +200,32 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         let createdAt = storie["created_at"] as! String
         let fullname = storie["user_fullname"] as! String
         
+//        cell.photoImageView.hnk_setImageFromURLAutoSize(url: image)//.hnk_setImageFromURL(URL(string: url)!)
         if let url = URL(string: image) {
             let asset:AVAsset = AVAsset(url: url)
-            
+
             // Fetch the duration of the video
             let durationSeconds = CMTimeGetSeconds(asset.duration)
             let assetImgGenerate : AVAssetImageGenerator = AVAssetImageGenerator(asset: asset)
-            
+
             assetImgGenerate.appliesPreferredTrackTransform = true
-            
+
             // Jump to the third (1/3) of the video and fetch the thumbnail from there (600 is the timescale and is a multiplier of 24fps, 25fps, 30fps..)
             let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
             var img         : CGImage
             do {
                 img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
                 let frameImg: UIImage = UIImage(cgImage: img)
-                
+
                 cell.photoImageView.image =  frameImg
 
                 let duration = NSInteger(event.duration)
                 let seconds = String(format: "%02d", duration % 60)
                 let minutes = (duration / 60) % 60
                 cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
-                
-                
-                
+
+
+
             } catch let error as NSError {
                 print("ERROR: \(error)")
                 cell.photoImageView.image = nil
@@ -221,8 +240,8 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
             
             let videoURL = URL(string: url)
-            let player = AVPlayer(url: videoURL!)
-            let playerLayer = AVPlayerLayer(player: player)
+            self.player = AVPlayer(url: videoURL!)
+            let playerLayer = AVPlayerLayer(player: self.player)
             
             playerLayer.frame = self.previewVideoContainerView.view.bounds
             
@@ -264,9 +283,13 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
             self.previewVideoContainerView.view.addGestureRecognizer(tapGesture)
             
+            self.player.play()
             
-            
-            player.play()
+            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem, queue: nil, using: { (_) in
+                DispatchQueue.main.async {
+                    self.previewVideoContainerView.dismiss(animated: false, completion: nil)
+                }
+            })
         }
         
         return cell
@@ -286,4 +309,14 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     }
     
     
+}
+
+extension UIImageView {
+    func hnk_setImageFromURLAutoSize(url: NSURL) {
+        var format: Format<UIImage>? = nil
+        if frame.size == CGSize.zero {
+            format = Format<UIImage>(name: "original")
+        }
+        hnk_setImageFromURL(url as URL, format: format)
+    }
 }
