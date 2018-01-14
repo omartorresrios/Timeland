@@ -32,6 +32,14 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         return button
     }()
     
+    let loader: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        indicator.alpha = 1.0
+        indicator.startAnimating()
+        indicator.isHidden = false
+        return indicator
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = .white
@@ -174,6 +182,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             if touchPoint.y - initialTouchPoint.y > 100 {
                 self.previewVideoContainerView.dismiss(animated: true, completion: nil)
                 self.player.pause()
+                self.playerLayer.removeFromSuperlayer()
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
                     self.previewVideoContainerView.view.frame = CGRect(x: 0, y: 0, width: self.previewVideoContainerView.view.frame.size.width, height: self.previewVideoContainerView.view.frame.size.height)
@@ -188,6 +197,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     let previewVideoContainerView = PreviewVideoContainerView()
     var player = AVPlayer()
+    var playerLayer = AVPlayerLayer()
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
@@ -236,18 +246,19 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         
         cell.goToWatch = {
             
-            
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
             
             let videoURL = URL(string: url)
             self.player = AVPlayer(url: videoURL!)
-            let playerLayer = AVPlayerLayer(player: self.player)
+            self.playerLayer = AVPlayerLayer(player: self.player)
             
-            playerLayer.frame = self.previewVideoContainerView.view.bounds
+            self.playerLayer.frame = self.previewVideoContainerView.view.bounds
             
-            self.previewVideoContainerView.view.layer.addSublayer(playerLayer)
+            self.previewVideoContainerView.view.layer.addSublayer(self.playerLayer)
             
-            playerLayer.zPosition = -5
+            self.player.play()
+            
+            self.playerLayer.zPosition = -5
             
             // deleting the Z in the final
             let zEndIndex = createdAt.index(createdAt.endIndex, offsetBy: -1)
@@ -270,8 +281,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             let dateString = dateFormatter.string(from: date)
             print("EXACT_DATE : \(dateString)")
             
-            
-            
             let timeLabel = UILabel()
             timeLabel.tintColor = .black
             timeLabel.backgroundColor = .yellow
@@ -283,11 +292,12 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
             self.previewVideoContainerView.view.addGestureRecognizer(tapGesture)
             
-            self.player.play()
-            
             NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem, queue: nil, using: { (_) in
                 DispatchQueue.main.async {
+                    self.playerLayer.removeFromSuperlayer()
                     self.previewVideoContainerView.dismiss(animated: false, completion: nil)
+                    
+                    
                 }
             })
         }
