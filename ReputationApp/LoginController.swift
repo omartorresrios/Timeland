@@ -154,7 +154,7 @@ class LoginController: UIViewController {
                             self.view.endEditing(true)
                             
                             let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                            appDel.logUser()
+                            appDel.logUser(forAppDelegate: true)
                             
                         }
                     }

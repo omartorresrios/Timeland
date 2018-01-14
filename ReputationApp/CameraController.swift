@@ -50,7 +50,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                     self.blurView.removeFromSuperview()
                     self.sendButton.removeFromSuperview()
                     let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDel.logUser()
+                    appDel.logUser(forAppDelegate: false)
 
                 }
             })

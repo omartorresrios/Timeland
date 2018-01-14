@@ -27,11 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         UIApplication.shared.statusBarStyle = .lightContent
-        logUser()
+        logUser(forAppDelegate: true)
         return true
     }
     
-    func logUser() {
+    func logUser(forAppDelegate: Bool) {
         let defaults = UserDefaults.standard
         if defaults.object(forKey: "userLoggedIn") != nil {
             
@@ -45,8 +45,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                               middleVC: middle,
                                                                               rightVC: right)
             
-            showViewControllerWith(newViewController: snapContainer, usingAnimation: AnimationType.ANIMATE_UP)
-//            self.window?.rootViewController = snapContainer
+            if forAppDelegate == true {
+                self.window?.rootViewController = snapContainer
+            } else {
+                showViewControllerWith(newViewController: snapContainer, usingAnimation: AnimationType.ANIMATE_UP)
+            }
+            
             self.window?.makeKeyAndVisible()
             
         }
