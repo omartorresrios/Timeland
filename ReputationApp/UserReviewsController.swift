@@ -54,8 +54,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserReviewsCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.isPagingEnabled = false
         
-//        let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler(_:)))
-//        view.addGestureRecognizer(tapGesture)
+
         
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissContainerView))
         view.addGestureRecognizer(tap)
@@ -87,53 +86,6 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         AudioBot.pausePlay()
         containerView.audioLengthLabel.text = "0:00"
         containerView.progressView.progress = 0
-    }
-    
-    
-    
-    //    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    //        let cell = UserReviewsCell()
-    //        cell.letsGo = false
-    //    }
-    
-    //    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-    ////        let index = targetContentOffset.pointee.x / view.frame.width
-    ////        print("index: ", index)
-    ////        let indexPath = IndexPath(item: Int(index), section: 0)
-    ////
-    ////        let reviewAudio = reviewAudios[indexPath.item]
-    //        let cell = UserReviewsCell()
-    //        cell.letsGo = false
-    ////        cell.playAudio(url: reviewAudio.fileURL, isPlay: false)
-    //
-    //    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        //        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserReviewsCell
-        
-        //        if let cell = cell as? UserReviewsCell {
-        //            if let play = cell.player {
-        //                print("stopped")
-        //                play.pause()
-        ////                cell.player = nil
-        ////                cell.audioSlider.value = 0
-        ////                cell.isPlaying = false
-        //                print("player deallocated")
-        //            } else {
-        //                print("player was already deallocated")
-        //            }
-        //        }
-        //
-        
-        
-        
-        
-        
-        //        var reviewAudio = reviewAudios[indexPath.item]
-        //        cell.letsGo = false
-        //        cell.playAudio(url: reviewAudio.fileURL)
-        
-        
     }
     
     func parseDuration(_ timeString:String) -> TimeInterval {
@@ -211,6 +163,9 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         viewGeneral.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         viewGeneral.backgroundColor = .black
         
+        let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
+        viewGeneral.addGestureRecognizer(tapGesture)
+        
         viewGeneral.addSubview(containerView)
         containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
         containerView.backgroundColor = .white
@@ -225,28 +180,29 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         return true
     }
     
-//    // define a variable to store initial touch position
-//    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
-//    
-//    func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
-//        let touchPoint = sender.location(in: self.view?.window)
-//        
-//        if sender.state == UIGestureRecognizerState.began {
-//            initialTouchPoint = touchPoint
-//        } else if sender.state == UIGestureRecognizerState.changed {
-//            if touchPoint.y - initialTouchPoint.y > 0 {
-//                self.view.frame = CGRect(x: 0, y: touchPoint.y - initialTouchPoint.y, width: self.view.frame.size.width, height: self.view.frame.size.height)
-//            }
-//        } else if sender.state == UIGestureRecognizerState.ended || sender.state == UIGestureRecognizerState.cancelled {
-//            if touchPoint.y - initialTouchPoint.y > 100 {
-//                self.dismiss(animated: true, completion: nil)
-//            } else {
-//                UIView.animate(withDuration: 0.3, animations: {
-//                    self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
-//                })
-//            }
-//        }
-//    }
+    // define a variable to store initial touch position
+    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
+    
+    func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
+        let touchPoint = sender.location(in: viewGeneral.window)
+        
+        if sender.state == UIGestureRecognizerState.began {
+            initialTouchPoint = touchPoint
+        } else if sender.state == UIGestureRecognizerState.changed {
+            if touchPoint.y - initialTouchPoint.y > 0 {
+                self.viewGeneral.frame = CGRect(x: 0, y: touchPoint.y - initialTouchPoint.y, width: self.viewGeneral.frame.size.width, height: self.viewGeneral.frame.size.height)
+            }
+        } else if sender.state == UIGestureRecognizerState.ended || sender.state == UIGestureRecognizerState.cancelled {
+            if touchPoint.y - initialTouchPoint.y > 100 {
+                self.viewGeneral.removeFromSuperview()
+                self.dismissContainerView()
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.viewGeneral.frame = CGRect(x: 0, y: 0, width: self.viewGeneral.frame.size.width, height: self.viewGeneral.frame.size.height)
+                })
+            }
+        }
+    }
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -313,11 +269,14 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
 
             self.containerView.audioLengthLabel.text = "\(minutes):\(seconds)"
 
+            var height: CGFloat = 44
+            height += 20
+            
             self.view.addSubview(self.containerView)
-            self.containerView.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 4, paddingBottom: 0, paddingRight: 4, width: 0, height: 60)
+            self.containerView.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: height)
 
             self.containerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-
+            
             self.containerView.playOrPauseAudioAction = { [weak self] cell, progressView in
                 func tryPlay() {
                     do {

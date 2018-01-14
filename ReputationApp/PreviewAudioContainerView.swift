@@ -13,7 +13,7 @@ class PreviewAudioContainerView: UIView {
     let fullnameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
+        label.font = UIFont.systemFont(ofSize: 13)//(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .left
         return label
     }()
@@ -75,33 +75,20 @@ class PreviewAudioContainerView: UIView {
         return label
     }()
     
-    let currentTimeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "00:00"
-        label.textColor = .black
-        label.font = UIFont.boldSystemFont(ofSize: 13)
-        return label
-    }()
-    
     func setupViews() {
         
         addSubview(fullnameLabel)
         fullnameLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         addSubview(playButton)
-        playButton.anchor(top: fullnameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
-        
-        addSubview(currentTimeLabel)
-        currentTimeLabel.anchor(top: nil, left: playButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 50, height: 24)
-        currentTimeLabel.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
+        playButton.anchor(top: fullnameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
         
         addSubview(progressView)
-        progressView.anchor(top: nil, left: currentTimeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        progressView.anchor(top: nil, left: playButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         progressView.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
         
         addSubview(audioLengthLabel)
-        audioLengthLabel.anchor(top: nil, left: progressView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 50, height: 24)
+        audioLengthLabel.anchor(top: nil, left: progressView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
         audioLengthLabel.centerYAnchor.constraint(equalTo: playButton.centerYAnchor).isActive = true
         
     }
