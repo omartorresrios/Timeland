@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A02B3791200BC8990062CF4F /* GoogleService-Info.plist */; };
 		A035D7E21FF925800063706B /* UserReviewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E11FF925800063706B /* UserReviewsCell.swift */; };
 		A035D7E41FF9259C0063706B /* PreviewAudioContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */; };
 		A035D7E61FF927D50063706B /* User1.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E51FF927D50063706B /* User1.swift */; };
@@ -77,6 +78,8 @@
 
 /* Begin PBXFileReference section */
 		6E28B6B66614A10E560EF10A /* Pods-ReputationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReputationApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReputationApp/Pods-ReputationApp.release.xcconfig"; sourceTree = "<group>"; };
+		A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Signin-Bridging-Header.h"; sourceTree = "<group>"; };
+		A02B3791200BC8990062CF4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A035D7E11FF925800063706B /* UserReviewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserReviewsCell.swift; sourceTree = "<group>"; };
 		A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewAudioContainerView.swift; sourceTree = "<group>"; };
 		A035D7E51FF927D50063706B /* User1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User1.swift; sourceTree = "<group>"; };
@@ -368,6 +371,7 @@
 		A0EF640F1EC40757006609F7 /* ReputationApp */ = {
 			isa = PBXGroup;
 			children = (
+				A02B3791200BC8990062CF4F /* GoogleService-Info.plist */,
 				A070FE1B1FA11C1300488431 /* MyProfile */,
 				A0BD0A011F96BB0A009C0CD3 /* UserFeed */,
 				A09EEB641F84646F009836DC /* StartView */,
@@ -414,6 +418,7 @@
 				A0EF643D1EC420FC006609F7 /* Selfie-Bridging-Header.h */,
 				A0EF641C1EC40758006609F7 /* Info.plist */,
 				A07B3BC51ED7810E00F10657 /* Constants.swift */,
+				A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */,
 			);
 			name = "Supporting files";
 			sourceTree = "<group>";
@@ -519,6 +524,7 @@
 				A07B95891F2D9FBE008E9EA0 /* SF-UI-Display-Thin.otf in Resources */,
 				A07B95881F2D9FBE008E9EA0 /* SF-UI-Display-Semibold.otf in Resources */,
 				A0EF64181EC40758006609F7 /* Assets.xcassets in Resources */,
+				A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */,
 				A07B95841F2D9FBD008E9EA0 /* SF-UI-Display-Bold.otf in Resources */,
 				A0EF64161EC40757006609F7 /* Main.storyboard in Resources */,
 			);

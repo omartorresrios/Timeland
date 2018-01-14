@@ -85,23 +85,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     var finalDuration: TimeInterval?
     
-    func compressVideo(inputURL: URL, outputURL: URL, handler:@escaping (_ exportSession: AVAssetExportSession?)-> Void) {
-        let urlAsset = AVURLAsset(url: inputURL, options: nil)
-        guard let exportSession = AVAssetExportSession(asset: urlAsset, presetName: AVAssetExportPresetHighestQuality) else {
-            handler(nil)
-            
-            return
-        }
-        
-        exportSession.outputURL = outputURL
-        exportSession.outputFileType = AVFileTypeQuickTimeMovie
-        exportSession.shouldOptimizeForNetworkUse = true
-        print("abusivo: ", exportSession.presetName)
-        exportSession.exportAsynchronously { () -> Void in
-            handler(exportSession)
-        }
-    }
-    
     func loadUserEvents() {
         // Retreieve Auth_Token from Keychain
         if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
@@ -210,17 +193,14 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         let createdAt = storie["created_at"] as! String
         let fullname = storie["user_fullname"] as! String
         
-//        cell.photoImageView.hnk_setImageFromURLAutoSize(url: image)//.hnk_setImageFromURL(URL(string: url)!)
         if let url = URL(string: image) {
             let asset:AVAsset = AVAsset(url: url)
 
-            // Fetch the duration of the video
             let durationSeconds = CMTimeGetSeconds(asset.duration)
             let assetImgGenerate : AVAssetImageGenerator = AVAssetImageGenerator(asset: asset)
 
             assetImgGenerate.appliesPreferredTrackTransform = true
 
-            // Jump to the third (1/3) of the video and fetch the thumbnail from there (600 is the timescale and is a multiplier of 24fps, 25fps, 30fps..)
             let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
             var img         : CGImage
             do {

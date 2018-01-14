@@ -167,7 +167,9 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         viewGeneral.addGestureRecognizer(tapGesture)
         
         viewGeneral.addSubview(containerView)
-        containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
+        var height: CGFloat = 44
+        height += 20
+        containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: height)
         containerView.backgroundColor = .white
         containerView.layer.cornerRadius = 5
         containerView.centerYAnchor.constraint(equalTo: viewGeneral.centerYAnchor).isActive = true
@@ -269,13 +271,6 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
 
             self.containerView.audioLengthLabel.text = "\(minutes):\(seconds)"
 
-            var height: CGFloat = 44
-            height += 20
-            
-            self.view.addSubview(self.containerView)
-            self.containerView.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: height)
-
-            self.containerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
             
             self.containerView.playOrPauseAudioAction = { [weak self] cell, progressView in
                 func tryPlay() {

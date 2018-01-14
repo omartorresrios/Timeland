@@ -13,5 +13,6 @@ target 'ReputationApp' do
   pod "HanekeSwift", :git => 'https://github.com/Haneke/HanekeSwift.git', :branch => 'feature/swift-3'
   pod 'AudioBot'
   pod 'googleapis', :path => '.'
+  pod 'Google/SignIn'
 
 end
