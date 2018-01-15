@@ -16,6 +16,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     var userId: Int?
     var userFullname: String?
+    var userEmail: String?
     var userImageUrl: String?
     var currentUserDic = [String: Any]()
     var images: [NSURL] = []
@@ -98,7 +99,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             
             print("THE HEADER: \(header)")
             
-            Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userFullname!)/events", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { response in
+            Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userId!)/events", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { response in
                 
                 print("request: \(response.request!)") // original URL request
                 print("response: \(response.response!)") // URL response

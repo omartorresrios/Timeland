@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A02B3791200BC8990062CF4F /* GoogleService-Info.plist */; };
+		A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02B3793200C45A80062CF4F /* MyProfileCell.swift */; };
 		A035D7E21FF925800063706B /* UserReviewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E11FF925800063706B /* UserReviewsCell.swift */; };
 		A035D7E41FF9259C0063706B /* PreviewAudioContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */; };
 		A035D7E61FF927D50063706B /* User1.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E51FF927D50063706B /* User1.swift */; };
@@ -79,6 +80,7 @@
 		6E28B6B66614A10E560EF10A /* Pods-ReputationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReputationApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReputationApp/Pods-ReputationApp.release.xcconfig"; sourceTree = "<group>"; };
 		A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Signin-Bridging-Header.h"; sourceTree = "<group>"; };
 		A02B3791200BC8990062CF4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A02B3793200C45A80062CF4F /* MyProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileCell.swift; sourceTree = "<group>"; };
 		A035D7E11FF925800063706B /* UserReviewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserReviewsCell.swift; sourceTree = "<group>"; };
 		A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewAudioContainerView.swift; sourceTree = "<group>"; };
 		A035D7E51FF927D50063706B /* User1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User1.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 			isa = PBXGroup;
 			children = (
 				A070FE1C1FA11C9500488431 /* MyProfileController.swift */,
+				A02B3793200C45A80062CF4F /* MyProfileCell.swift */,
 			);
 			name = MyProfile;
 			sourceTree = "<group>";
@@ -589,6 +592,7 @@
 				A0F872A81FF9295B00EAF27A /* FileManager+VoiceMemo.swift in Sources */,
 				A0F254181F89C2FD00FC234A /* PreviewPhotoContainerView.swift in Sources */,
 				A0F2541F1F8A80B000FC234A /* CustomAnimationDismisser.swift in Sources */,
+				A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */,
 				A0BD09FB1F955E56009C0CD3 /* VideoLibraryContentHeader.swift in Sources */,
 				A09626A720028E8500D2CF06 /* UserFeedCell.swift in Sources */,
 				A07B3C3E1EDB82FD00F10657 /* UserSearchCell.swift in Sources */,

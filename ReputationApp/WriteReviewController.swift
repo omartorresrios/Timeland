@@ -229,7 +229,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
             
             let header = ["Authorization": "Token token=\(authToken)"]
             
-            let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/\(userFullname!)/speak")!
+            let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/\(userId!)/speak")!
             
             Alamofire.upload(multipartFormData: { multipartFormData in
                 

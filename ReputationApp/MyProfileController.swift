@@ -8,7 +8,6 @@
 
 import UIKit
 import Locksmith
-import Alamofire
 
 class MyProfileController: UIViewController {
     
@@ -76,15 +75,15 @@ class MyProfileController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         
         setupUserInfo()
-        
         setupTopViews()
-        
+        setupOptionsButtons()
         setupOptionsButtons()
         
     }
     
     func setupUserInfo() {
         guard let userName = Locksmith.loadDataForUserAccount(userAccount: "currentUserName") else { return }
+        guard let userEmail = Locksmith.loadDataForUserAccount(userAccount: "currentUserEmail") else { return }
         guard let userId = Locksmith.loadDataForUserAccount(userAccount: "currentUserId") else { return }
         guard let userUsername = Locksmith.loadDataForUserAccount(userAccount: "currentUsernameName") else { return }
         guard let userAvatar = Locksmith.loadDataForUserAccount(userAccount: "currentAvatar") else { return }
@@ -93,6 +92,7 @@ class MyProfileController: UIViewController {
         
         userDictionary.updateValue((userId as [String : AnyObject])["id"] as! Int!, forKey: "id")
         userDictionary.updateValue((userName as [String : AnyObject])["name"] as! String!, forKey: "fullname")
+        userDictionary.updateValue((userEmail as [String : AnyObject])["email"] as! String!, forKey: "email")
         userDictionary.updateValue((userUsername as [String : AnyObject])["username"] as! String!, forKey: "username")
         userDictionary.updateValue((userAvatar as [String : AnyObject])["userAvatar"] as! String!, forKey: "avatarUrl")
         
@@ -121,7 +121,6 @@ class MyProfileController: UIViewController {
         view.addSubview(stackView)
         stackView.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 50)
         stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
     }
     
     func handleSheetAction() {

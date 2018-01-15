@@ -97,6 +97,15 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         view.addSubview(swiftyCamButton)
         swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
         swiftyCamButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        let button = UIButton()
+        button.setTitle("jaja", for: .normal)
+        button.backgroundColor = .yellow
+        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        view.addSubview(button)
+        button.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 20, height: 40)
+        button.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     override func viewDidLoad() {
@@ -115,6 +124,33 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         super.viewDidAppear(animated)
         swiftyCamButton.delegate = self
         swiftyButton()
+    }
+    
+    func handleLogout() {
+        clearLoggedinFlagInUserDefaults()
+        clearAPITokensFromKeyChain()
+        
+        DispatchQueue.main.async {
+            let loginController = LoginController()
+            let navController = UINavigationController(rootViewController: loginController)
+            self.present(navController, animated: true, completion: nil)
+        }
+    }
+    
+    // 1. Clears the NSUserDefaults flag
+    func clearLoggedinFlagInUserDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "userLoggedIn")
+        defaults.synchronize()
+    }
+    
+    
+    // 3. Clears API Auth token from Keychain
+    func clearAPITokensFromKeyChain() {
+        // clear API Auth Token
+        try! Locksmith.deleteDataForUserAccount(userAccount: "AuthToken")
+        try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserId")
+        try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserName")
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {

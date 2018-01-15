@@ -116,7 +116,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
             
             print("THE HEADER: \(header)")
             
-            Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userFullname!)/reviews", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { (response) in
+            Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userId!)/reviews", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { (response) in
                 switch response.result {
                 case .success(let JSON):
                     
