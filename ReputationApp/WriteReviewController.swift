@@ -252,6 +252,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
                         
                         if let JSON = response.result.value {
                             print("JSON: \(JSON)")
+                            self.dismiss(animated: true, completion: nil)
                         }
                     }
                     

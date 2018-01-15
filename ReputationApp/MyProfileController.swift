@@ -8,6 +8,7 @@
 
 import UIKit
 import Locksmith
+import GoogleSignIn
 
 class MyProfileController: UIViewController {
     
@@ -142,6 +143,7 @@ class MyProfileController: UIViewController {
     func handleLogout() {
         clearLoggedinFlagInUserDefaults()
         clearAPITokensFromKeyChain()
+        GIDSignIn.sharedInstance().signOut()
         
         DispatchQueue.main.async {
             let loginController = LoginController()

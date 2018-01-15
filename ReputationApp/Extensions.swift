@@ -108,7 +108,7 @@ extension Date {
         let unit: String
         if secondsAgo < minute {
             quotient = secondsAgo
-            unit = "sec"
+            unit = "seg"
         } else if secondsAgo < hour {
             quotient = secondsAgo / minute
             unit = "min"
