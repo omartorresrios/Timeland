@@ -10,18 +10,15 @@ import UIKit
 import Locksmith
 import Alamofire
 
-private let reuseIdentifier = "Cell"
-
-class MyProfileController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MyProfileController: UIViewController {
     
-    var collectionView: UICollectionView!
-    let cellId = "cellId"
     var userSelected: User! = nil
     var userDictionary = [String: Any]()
     
     let storiesOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .red
+        button.backgroundColor = .black
+        button.tintColor = .white
         button.setTitle("Momentos", for: .normal)
         button.addTarget(self, action: #selector(showUserStoriesView), for: .touchUpInside)
         button.layer.cornerRadius = 25
@@ -30,11 +27,26 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
     
     let reviewsOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .red
+        button.backgroundColor = .black
+        button.tintColor = .white
         button.setTitle("Reseñas", for: .normal)
         button.addTarget(self, action: #selector(showUserReviewsView), for: .touchUpInside)
         button.layer.cornerRadius = 25
         return button
+    }()
+    
+    let fullnameLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    let gearIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .black
+        return imageView
     }()
     
     func showUserReviewsView() {
@@ -59,27 +71,25 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("MyProfileController loaded")
-        // Do any additional setup after loading the view, typically from a nib.
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: 90, height: 120)
         
-        collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(MyProfileCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.backgroundColor = .yellow
-        self.view.addSubview(collectionView)
+        view.backgroundColor = .white
+        navigationController?.navigationBar.isHidden = true
         
+        setupUserInfo()
+        
+        setupTopViews()
+        
+        setupOptionsButtons()
+        
+    }
+    
+    func setupUserInfo() {
         guard let userName = Locksmith.loadDataForUserAccount(userAccount: "currentUserName") else { return }
         guard let userId = Locksmith.loadDataForUserAccount(userAccount: "currentUserId") else { return }
         guard let userUsername = Locksmith.loadDataForUserAccount(userAccount: "currentUsernameName") else { return }
         guard let userAvatar = Locksmith.loadDataForUserAccount(userAccount: "currentAvatar") else { return }
         
-        
-        self.navigationItem.title = (userName as [String : AnyObject])["name"] as! String?
-        
+        fullnameLabel.text = (userName as [String : AnyObject])["name"] as! String?
         
         userDictionary.updateValue((userId as [String : AnyObject])["id"] as! Int!, forKey: "id")
         userDictionary.updateValue((userName as [String : AnyObject])["name"] as! String!, forKey: "fullname")
@@ -89,29 +99,16 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
         let user = User(uid: (userId as [String : AnyObject])["id"] as! Int!, dictionary: userDictionary)
         
         userSelected = user
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear"), style: .plain, target: self, action: #selector(handleSheetAction))
-        
-        setupOptionsButtons()
-        
-        //        loadEvents()
     }
     
-    func handleSheetAction() {
-        let actionSheetController = UIAlertController()
+    func setupTopViews() {
+        view.addSubview(gearIcon)
+        gearIcon.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 25, height: 25)
+        gearIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSheetAction)))
+        gearIcon.isUserInteractionEnabled = true
         
-        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-            
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        let saveActionButton = UIAlertAction(title: "logout", style: .default) { (action) in
-            self.handleLogout()
-        }
-        actionSheetController.addAction(saveActionButton)
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
+        view.addSubview(fullnameLabel)
+        fullnameLabel.anchor(top: gearIcon.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
     }
     
     fileprivate func setupOptionsButtons() {
@@ -124,45 +121,23 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
         view.addSubview(stackView)
         stackView.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 50)
         stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        stackView.backgroundColor = .black
         
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! MyProfileCell
+    func handleSheetAction() {
+        let actionSheetController = UIAlertController()
         
-        return cell
-    }
-    
-    func loadEvents() {
-        // Retreieve Auth_Token from Keychain
-        if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
+        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
             
-            let authToken = userToken["authenticationToken"] as! String
-            
-            print("Token: \(userToken)")
-            
-            // Set Authorization header
-            let header = ["Authorization": "Token token=\(authToken)"]
-            
-            print("THE HEADER: \(header)")
-            
-            Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/events", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { (response) in
-                switch response.result {
-                case .success(let JSON):
-                    print("THE EVENTS: \(JSON)")
-                    
-                case .failure(let error):
-                    print("Some error ocurred:", error)
-                }
-            }
         }
+        actionSheetController.addAction(cancelActionButton)
         
+        let saveActionButton = UIAlertAction(title: "Cerrar sesión", style: .default) { (action) in
+            self.handleLogout()
+        }
+        actionSheetController.addAction(saveActionButton)
+        
+        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     func handleLogout() {
@@ -176,15 +151,12 @@ class MyProfileController: UIViewController, UICollectionViewDataSource, UIColle
         }
     }
     
-    // 1. Clears the NSUserDefaults flag
     func clearLoggedinFlagInUserDefaults() {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "userLoggedIn")
         defaults.synchronize()
     }
     
-    
-    // 3. Clears API Auth token from Keychain
     func clearAPITokensFromKeyChain() {
         // clear API Auth Token
         try! Locksmith.deleteDataForUserAccount(userAccount: "AuthToken")

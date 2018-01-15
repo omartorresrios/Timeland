@@ -48,7 +48,6 @@
 		A0BD09FB1F955E56009C0CD3 /* VideoLibraryContentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BD09FA1F955E56009C0CD3 /* VideoLibraryContentHeader.swift */; };
 		A0BD09FE1F96A7E0009C0CD3 /* UserFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BD09FD1F96A7E0009C0CD3 /* UserFeedController.swift */; };
 		A0BD0A001F96B71D009C0CD3 /* UserFeedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BD09FF1F96B71D009C0CD3 /* UserFeedLayout.swift */; };
-		A0D0542B1FDB54D000C738F5 /* MyProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D0542A1FDB54D000C738F5 /* MyProfileCell.swift */; };
 		A0D0542E1FDB6BF400C738F5 /* SnapContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D0542C1FDB6BF300C738F5 /* SnapContainerViewController.swift */; };
 		A0D0542F1FDB6BF400C738F5 /* VerticalScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D0542D1FDB6BF300C738F5 /* VerticalScrollViewController.swift */; };
 		A0DD9D751FE189450080FA91 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0DD9D741FE189450080FA91 /* CacheManager.swift */; };
@@ -121,7 +120,6 @@
 		A0BD09FA1F955E56009C0CD3 /* VideoLibraryContentHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoLibraryContentHeader.swift; sourceTree = "<group>"; };
 		A0BD09FD1F96A7E0009C0CD3 /* UserFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserFeedController.swift; sourceTree = "<group>"; };
 		A0BD09FF1F96B71D009C0CD3 /* UserFeedLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserFeedLayout.swift; sourceTree = "<group>"; };
-		A0D0542A1FDB54D000C738F5 /* MyProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileCell.swift; sourceTree = "<group>"; };
 		A0D0542C1FDB6BF300C738F5 /* SnapContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapContainerViewController.swift; sourceTree = "<group>"; };
 		A0D0542D1FDB6BF300C738F5 /* VerticalScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalScrollViewController.swift; sourceTree = "<group>"; };
 		A0DD9D741FE189450080FA91 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
@@ -257,7 +255,6 @@
 			isa = PBXGroup;
 			children = (
 				A070FE1C1FA11C9500488431 /* MyProfileController.swift */,
-				A0D0542A1FDB54D000C738F5 /* MyProfileCell.swift */,
 			);
 			name = MyProfile;
 			sourceTree = "<group>";
@@ -620,7 +617,6 @@
 				A0DD9D751FE189450080FA91 /* CacheManager.swift in Sources */,
 				A07B3C3B1ED91EDB00F10657 /* SignUpController.swift in Sources */,
 				A0991FDC200707A100C00027 /* Event.swift in Sources */,
-				A0D0542B1FDB54D000C738F5 /* MyProfileCell.swift in Sources */,
 				A039853B1F8BEECE0025A7AB /* PreviewVideoContainerView.swift in Sources */,
 				A0D0542E1FDB6BF400C738F5 /* SnapContainerViewController.swift in Sources */,
 				A03985391F8BCC000025A7AB /* CameraController.swift in Sources */,
