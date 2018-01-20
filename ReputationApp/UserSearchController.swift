@@ -408,24 +408,19 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         let storiesTap = UITapGestureRecognizer(target: self, action: #selector(showUserStoriesView))
         storiesViewContainer.addGestureRecognizer(storiesTap)
         
-        let storiesIcon = UIImageView()
-        storiesIcon.image = #imageLiteral(resourceName: "moments")
+        let storiesEmojiView = UIImageView()
+        let storiesEmoji = "🍻".image()
+        storiesEmojiView.image = storiesEmoji
         
-        let storiesLabel = UILabel()
-        storiesLabel.font = UIFont.systemFont(ofSize: 14)
-        storiesLabel.lineBreakMode = .byWordWrapping
-        storiesLabel.sizeToFit()
-        storiesLabel.text = "Momentos"
-        
-        storiesViewContainer.addSubview(storiesIcon)
+        storiesViewContainer.addSubview(storiesEmojiView)
         storiesViewContainer.addSubview(storiesLabel)
-        storiesIcon.anchor(top: nil, left: storiesViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 30)
-        storiesIcon.isUserInteractionEnabled = true
-        storiesIcon.centerYAnchor.constraint(equalTo: storiesViewContainer.centerYAnchor).isActive = true
+        storiesEmojiView.anchor(top: nil, left: storiesViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        storiesEmojiView.isUserInteractionEnabled = true
+        storiesEmojiView.centerYAnchor.constraint(equalTo: storiesViewContainer.centerYAnchor).isActive = true
         
-        storiesLabel.anchor(top: nil, left: storiesIcon.rightAnchor, bottom: nil, right: storiesViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        storiesLabel.anchor(top: nil, left: storiesEmojiView.rightAnchor, bottom: nil, right: storiesViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
         storiesLabel.isUserInteractionEnabled = true
-        storiesLabel.centerYAnchor.constraint(equalTo: storiesIcon.centerYAnchor).isActive = true
+        storiesLabel.centerYAnchor.constraint(equalTo: storiesEmojiView.centerYAnchor).isActive = true
         
         
         
@@ -436,22 +431,20 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         let reviewsTap = UITapGestureRecognizer(target: self, action: #selector(showUserReviewsView))
         reviewsViewContainer.addGestureRecognizer(reviewsTap)
         
-        let reviewsIcon = UIImageView()
-        reviewsIcon.image = #imageLiteral(resourceName: "reviews")
+        let reviewsEmojiView = UIImageView()
+        let reviewsEmoji = "👏".image()
+        reviewsEmojiView.image = reviewsEmoji
         
-        let reviewsLabel = UILabel()
         reviewsLabel.font = UIFont.systemFont(ofSize: 14)
-        reviewsLabel.lineBreakMode = .byWordWrapping
-        reviewsLabel.sizeToFit()
         reviewsLabel.text = "Reseñas"
         
-        reviewsViewContainer.addSubview(reviewsIcon)
+        reviewsViewContainer.addSubview(reviewsEmojiView)
         reviewsViewContainer.addSubview(reviewsLabel)
-        reviewsIcon.anchor(top: nil, left: reviewsViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 30)
-        reviewsIcon.centerYAnchor.constraint(equalTo: reviewsViewContainer.centerYAnchor).isActive = true
+        reviewsEmojiView.anchor(top: nil, left: reviewsViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        reviewsEmojiView.centerYAnchor.constraint(equalTo: reviewsViewContainer.centerYAnchor).isActive = true
         
-        reviewsLabel.anchor(top: nil, left: reviewsIcon.rightAnchor, bottom: nil, right: reviewsViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-        reviewsLabel.centerYAnchor.constraint(equalTo: reviewsIcon.centerYAnchor).isActive = true
+        reviewsLabel.anchor(top: nil, left: reviewsEmojiView.rightAnchor, bottom: nil, right: reviewsViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        reviewsLabel.centerYAnchor.constraint(equalTo: reviewsViewContainer.centerYAnchor).isActive = true
         
         
         
@@ -462,31 +455,53 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         let writeTap = UITapGestureRecognizer(target: self, action: #selector(showWriteReviewView))
         writeReviewViewContainer.addGestureRecognizer(writeTap)
         
+        let writeEmojiView = UIImageView()
+        let writeEmoji = "🗣".image()
+        writeEmojiView.image = writeEmoji
         
-        let writeIcon = UIImageView()
-        writeIcon.image = #imageLiteral(resourceName: "record")
-        
-        let writeLabel = UILabel()
-        writeLabel.font = UIFont.systemFont(ofSize: 14)
-        writeLabel.lineBreakMode = .byWordWrapping
-        writeLabel.sizeToFit()
-        writeLabel.text = "Deja una reseña"
-        
-        writeReviewViewContainer.addSubview(writeIcon)
+        writeReviewViewContainer.addSubview(writeEmojiView)
         writeReviewViewContainer.addSubview(writeLabel)
-        writeIcon.anchor(top: nil, left: writeReviewViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 30, height: 30)
-        writeIcon.centerYAnchor.constraint(equalTo: writeReviewViewContainer.centerYAnchor).isActive = true
+        writeEmojiView.anchor(top: nil, left: writeReviewViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        writeEmojiView.centerYAnchor.constraint(equalTo: writeReviewViewContainer.centerYAnchor).isActive = true
         
-        writeLabel.anchor(top: nil, left: writeIcon.rightAnchor, bottom: nil, right: writeReviewViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-        writeLabel.centerYAnchor.constraint(equalTo: writeIcon.centerYAnchor).isActive = true
+        writeLabel.anchor(top: nil, left: writeEmojiView.rightAnchor, bottom: nil, right: writeReviewViewContainer.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        writeLabel.centerYAnchor.constraint(equalTo: writeEmojiView.centerYAnchor).isActive = true
         
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissContainerView))
         viewGeneral.addGestureRecognizer(tap)
         tap.delegate = self
     }
     
+    let storiesLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.text = "Momentos"
+        label.textAlignment = .left
+        return label
+    }()
+    
+    let reviewsLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.text = "Reseñas"
+        label.textAlignment = .left
+        return label
+    }()
+    
+    let writeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.text = "Deja una reseña"
+        label.textAlignment = .left
+        return label
+    }()
+    
     func dismissContainerView() {
+        
+        
         viewGeneral.removeFromSuperview()
+        
+        
         view.removeGestureRecognizer(tap)
     }
     
@@ -534,6 +549,21 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = (view.frame.width - 32) / 3
         return CGSize(width: width, height: width + 20)
+    }
+    
+}
+
+extension String {
+    func image() -> UIImage {
+        let size = CGSize(width: 30, height: 35)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0);
+        UIColor.white.set()
+        let rect = CGRect(origin: CGPoint.zero, size: size)
+        UIRectFill(CGRect(origin: CGPoint.zero, size: size))
+        (self as NSString).draw(in: rect, withAttributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 30)])
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
     }
     
 }
