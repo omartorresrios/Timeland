@@ -33,10 +33,17 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         return label
     }()
     
-    let closeView: UIButton = {
+    let closeView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 15
+        view.backgroundColor = .black
+        return view
+    }()
+    
+    let closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .gray
+        button.tintColor = .white
         return button
     }()
     
@@ -54,8 +61,6 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserReviewsCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.isPagingEnabled = false
         
-
-        
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissContainerView))
         view.addGestureRecognizer(tap)
         tap.delegate = self
@@ -66,12 +71,23 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         view.addGestureRecognizer(tap)
         tap.delegate = self
         
-        loadUserReviews()
-        
-        view.addSubview(closeView)
-        closeView.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 15, height: 15)
-        closeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeViewController)))
-        
+        loadUserReviewsWithCloseButton()
+    }
+    
+    func loadUserReviewsWithCloseButton() {
+        loadUserReviews { (success) in
+            if success {
+                self.view.addSubview(self.closeView)
+                self.closeView.anchor(top: self.view.topAnchor, left: nil, bottom: nil, right: self.view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
+                self.closeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.closeViewController)))
+                
+                self.closeView.addSubview(self.closeButton)
+                self.closeButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 10, height: 10)
+                self.closeButton.centerXAnchor.constraint(equalTo: self.closeView.centerXAnchor).isActive = true
+                self.closeButton.centerYAnchor.constraint(equalTo: self.closeView.centerYAnchor).isActive = true
+                self.closeButton.addTarget(self, action: #selector(self.closeViewController), for: .touchUpInside)
+            }
+        }
     }
     
     func closeViewController() {
@@ -103,7 +119,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         return interval
     }
     
-    func loadUserReviews() {
+    func loadUserReviews(completion: @escaping (Bool) -> ()) {
         // Retreieve Auth_Token from Keychain
         if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
             
@@ -148,10 +164,13 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
                         //                        let review = Review1(fileURL: URL(string: url)!, duration: duration)
                         //                        self.reviews.append(review)
                         self.collectionView?.reloadData()
+                        
+                        completion(true)
                     })
                     
                 case .failure(let error):
                     print(error)
+                    completion(false)
                 }
             }
             

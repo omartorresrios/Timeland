@@ -123,18 +123,16 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 print("response data: \(response.data!)") // server data
                 print("result: \(response.result)") // result of response serialization
                 
-                if response.result.isFailure {
-                    completion(false)
-                }
-                
-                if let JSON = response.result.value as? [[String: Any]] {
+                switch response.result {
+                case .success(let JSON):
+                    
                     print("\nTHE USER EVENTS: \(JSON)\n")
                     
-                    for item in JSON {
+                    for item in (JSON as? [[String: Any]])! {
                         guard let storieDictionary = item as? [String: Any] else { return }
                         print("\nstorieDictionary: \(storieDictionary)")
                         
-//                        self.stories.append(storieDictionary)
+                        //                        self.stories.append(storieDictionary)
                         
                         let event_url = storieDictionary["event_url"] as! String
                         let duration = storieDictionary["duration"] as! String
@@ -154,7 +152,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                             let path = NSURL(string: DiskCache.basePath())!.appendingPathComponent("shared-data/original")
                             let cached = DiskCache(path: (path?.absoluteString)!).path(forKey: String(describing: URL))
                             let file = NSURL(fileURLWithPath: cached)
-
+                            
                             let eventVideo = Event(duration: self.finalDuration!, event_url: finalEventUrl, imageUrl: file, createdAt: createdAt, userFullname: userFullname)
                             self.eventVideos.append(eventVideo)
                             
@@ -168,7 +166,12 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                             
                         }
                     }
+                    
+                case .failure(let error):
+                    print(error)
+                    completion(false)
                 }
+                
             }
         }
     }
