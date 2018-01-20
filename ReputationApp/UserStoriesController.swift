@@ -26,10 +26,17 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     var eventVideos = [Event]()
     var stories = [[String: Any]]()
     
-    let closeView: UIButton = {
+    let closeView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 15
+        view.backgroundColor = .black
+        return view
+    }()
+    
+    let closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .gray
+        button.tintColor = .white
         return button
     }()
     
@@ -49,20 +56,30 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             layout.scrollDirection = .vertical
             layout.minimumLineSpacing = 0
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 31, left: 8, bottom:8, right: 8)
+            layout.sectionInset = UIEdgeInsets(top: 46, left: 8, bottom:8, right: 8)
         }
         
         // Register cell classes
         collectionView?.register(UserFeedCell.self, forCellWithReuseIdentifier: userFeedCell)
         collectionView?.isPagingEnabled = false
         
-        
-        
-        loadUserEvents()
-        
-        view.addSubview(closeView)
-        closeView.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 15, height: 15)
-        closeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeViewController)))
+        loadUserEventsWithCloseButton()
+    }
+    
+    func loadUserEventsWithCloseButton() {
+        loadUserEvents { (success) in
+            if success {
+                self.view.addSubview(self.closeView)
+                self.closeView.anchor(top: self.view.topAnchor, left: nil, bottom: nil, right: self.view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
+                self.closeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.closeViewController)))
+                
+                self.closeView.addSubview(self.closeButton)
+                self.closeButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 10, height: 10)
+                self.closeButton.centerXAnchor.constraint(equalTo: self.closeView.centerXAnchor).isActive = true
+                self.closeButton.centerYAnchor.constraint(equalTo: self.closeView.centerYAnchor).isActive = true
+                self.closeButton.addTarget(self, action: #selector(self.closeViewController), for: .touchUpInside)
+            }
+        }
     }
     
     func closeViewController() {
@@ -86,7 +103,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     var finalDuration: TimeInterval?
     
-    func loadUserEvents() {
+    func loadUserEvents(completion: @escaping (Bool) -> ()) {
         // Retreieve Auth_Token from Keychain
         if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
             
@@ -106,42 +123,48 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 print("response data: \(response.data!)") // server data
                 print("result: \(response.result)") // result of response serialization
                 
+                if response.result.isFailure {
+                    completion(false)
+                }
+                
                 if let JSON = response.result.value as? [[String: Any]] {
                     print("\nTHE USER EVENTS: \(JSON)\n")
                     
                     for item in JSON {
                         guard let storieDictionary = item as? [String: Any] else { return }
-                        print("storieDictionary: \(storieDictionary)")
+                        print("\nstorieDictionary: \(storieDictionary)")
                         
-                        self.stories.append(storieDictionary)
+//                        self.stories.append(storieDictionary)
                         
-                        let event_url = item["event_url"] as! String
+                        let event_url = storieDictionary["event_url"] as! String
+                        let duration = storieDictionary["duration"] as! String
+                        let createdAt = storieDictionary["created_at"] as! String
+                        let userFullname = storieDictionary["user_fullname"] as! String
                         
-                        let duration = item["duration"] as! String
+                        
                         self.finalDuration = self.parseDuration(duration)
-                        
-                        
-                        print("\nevent_url: ", event_url)
                         
                         let endIndex = event_url.index(event_url.endIndex, offsetBy: -11)
                         let finalEventUrl = event_url.substring(to: endIndex)
                         
-                        
                         let cache = Shared.dataCache
                         let URL = NSURL(string: finalEventUrl)!
-                        
-                        let eventVideo = Event(duration: self.finalDuration!)
-                        self.eventVideos.append(eventVideo)
-                        print("event's video: ", eventVideo.duration)
                         
                         cache.fetch(URL: URL as URL).onSuccess { (data) in
                             let path = NSURL(string: DiskCache.basePath())!.appendingPathComponent("shared-data/original")
                             let cached = DiskCache(path: (path?.absoluteString)!).path(forKey: String(describing: URL))
                             let file = NSURL(fileURLWithPath: cached)
-                            self.urls.append(finalEventUrl)
+
+                            let eventVideo = Event(duration: self.finalDuration!, event_url: finalEventUrl, imageUrl: file, createdAt: createdAt, userFullname: userFullname)
+                            self.eventVideos.append(eventVideo)
                             
-                            self.images.append(file)
+                            self.eventVideos.sort(by: { (e1, e2) -> Bool in
+                                return e1.createdAt.compare(e2.createdAt) == .orderedDescending
+                            })
+                            
                             self.collectionView?.reloadData()
+                            
+                            completion(true)
                             
                         }
                     }
@@ -176,7 +199,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return eventVideos.count//images.count
     }
     
     let previewVideoContainerView = PreviewVideoContainerView()
@@ -186,50 +209,70 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
         
-        let image = self.images[indexPath.item].absoluteString!
-        let url = self.urls[indexPath.item]
+//        let image = self.images[indexPath.item].absoluteString!
+//        let url = self.urls[indexPath.item]
         let event = eventVideos[indexPath.item]
-        let storie = stories[indexPath.item]
+//        let storie = stories[indexPath.item]
         
-        let createdAt = storie["created_at"] as! String
-        let fullname = storie["user_fullname"] as! String
+        let createdAt = event.createdAt//storie["created_at"] as! String
+        let fullname = event.userFullname//storie["user_fullname"] as! String
         
-        if let url = URL(string: image) {
+        var imageCache = [String: UIImage]()
+        var lastURLUsedToLoadImage: String?
+        
+        cell.photoImageView.image = nil // PUT A PLACEHOLDER
+        
+        if let url = URL(string: event.imageUrl.absoluteString!) {
+            lastURLUsedToLoadImage = url.absoluteString
+            
+            if let cachedImage = imageCache[url.absoluteString] {
+                cell.photoImageView.image =  cachedImage
+                print("nothing")
+            }
+            
             let asset:AVAsset = AVAsset(url: url)
-
+            
             let durationSeconds = CMTimeGetSeconds(asset.duration)
             let assetImgGenerate : AVAssetImageGenerator = AVAssetImageGenerator(asset: asset)
-
+            
             assetImgGenerate.appliesPreferredTrackTransform = true
-
-            let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
-            var img         : CGImage
-            do {
-                img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
-                let frameImg: UIImage = UIImage(cgImage: img)
-
-                cell.photoImageView.image =  frameImg
-
-                let duration = NSInteger(event.duration)
-                let seconds = String(format: "%02d", duration % 60)
-                let minutes = (duration / 60) % 60
-                cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
-
-
-
-            } catch let error as NSError {
-                print("ERROR: \(error)")
-                cell.photoImageView.image = nil
-            }
+            
+                let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
+                var img         : CGImage
+                
+                do {
+                    img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
+                    let frameImg: UIImage = UIImage(cgImage: img)
+                    
+                    if url.absoluteString != lastURLUsedToLoadImage {
+                        print("nothing")
+                    }
+                    
+                    imageCache[url.absoluteString] = frameImg
+                    
+                    DispatchQueue.main.async {
+                        cell.photoImageView.image =  frameImg
+                    }
+                    
+                } catch let error as NSError {
+                    print("ERROR: \(error)")
+                    cell.photoImageView.image = nil
+                }
+            
         } else {
             print("THE URL DOES NOT EXIST")
         }
+        
+//        let duration = NSInteger(event.duration)
+//        let seconds = String(format: "%02d", duration % 60)
+//        let minutes = (duration / 60) % 60
+//        cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
         
         cell.goToWatch = {
             
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
             
-            let videoURL = URL(string: url)
+            let videoURL = URL(string: event.event_url)
             self.player = AVPlayer(url: videoURL!)
             self.playerLayer = AVPlayerLayer(player: self.player)
             
@@ -267,7 +310,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             timeLabel.backgroundColor = .yellow
             timeLabel.text = date.timeAgoDisplay()
             
-            self.previewVideoContainerView.videoLengthLabel.setTitle(timeLabel.text, for: .normal)
+            self.previewVideoContainerView.videoLengthLabel.text = timeLabel.text
             self.previewVideoContainerView.userNameLabel.text = fullname
             
             let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
@@ -277,8 +320,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 DispatchQueue.main.async {
                     self.playerLayer.removeFromSuperlayer()
                     self.previewVideoContainerView.dismiss(animated: false, completion: nil)
-                    
-                    
                 }
             })
         }
@@ -297,17 +338,5 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = (view.frame.width - 32) / 3
         return CGSize(width: width, height: width + 60)
-    }
-    
-    
-}
-
-extension UIImageView {
-    func hnk_setImageFromURLAutoSize(url: NSURL) {
-        var format: Format<UIImage>? = nil
-        if frame.size == CGSize.zero {
-            format = Format<UIImage>(name: "original")
-        }
-        hnk_setImageFromURL(url as URL, format: format)
     }
 }

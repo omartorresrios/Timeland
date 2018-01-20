@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Haneke
 
 // Callbacks
 // Typealias for callbacks used

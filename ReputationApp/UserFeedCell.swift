@@ -57,8 +57,8 @@ class UserFeedCell: UICollectionViewCell {
         photoImageView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         photoImageView.isUserInteractionEnabled = true
         
-        photoImageView.addSubview(videoLengthLabel)
-        videoLengthLabel.anchor(top: photoImageView.topAnchor, left: photoImageView.leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 4, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        photoImageView.addSubview(videoLengthLabel)
+//        videoLengthLabel.anchor(top: photoImageView.topAnchor, left: photoImageView.leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 4, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         photoImageView.addSubview(playView)
         playView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 40, height: 40)

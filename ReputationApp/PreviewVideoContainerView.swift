@@ -15,22 +15,27 @@ class PreviewVideoContainerView: UIViewController {
     
     let userNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = .white
+        label.backgroundColor = .clear
+        label.layer.shadowOffset = CGSize(width: 0, height: 0)
+        label.layer.shadowOpacity = 1
+        label.layer.shadowRadius = 6
+        label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
     
     var url: URL?
     
-    let videoLengthLabel: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 5
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        button.setTitle("0:00", for: .normal)
-        button.tintColor = .white
-        return button
+    let videoLengthLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.backgroundColor = .clear
+        label.layer.shadowOffset = CGSize(width: 0, height: 0)
+        label.layer.shadowOpacity = 1
+        label.layer.shadowRadius = 6
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "0:00"
+        return label
     }()
     
     func handleCancel() {

@@ -167,8 +167,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         viewGeneral.addGestureRecognizer(tapGesture)
         
         viewGeneral.addSubview(containerView)
-        var height: CGFloat = 44
-        height += 20
+        let height: CGFloat = 25 + 44
         containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: height)
         containerView.backgroundColor = .white
         containerView.layer.cornerRadius = 5
@@ -227,7 +226,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         var receiverData = review["receiver"] as! [String: Any]
 
         var senderData = review["sender"] as! [String: Any]
-
+        
         let fullName = senderData["fullname"] as! String
         cell.fullnameLabel.text = fullName
 
@@ -262,7 +261,8 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         cell.goToListen = {
             
             self.setupReviewInfoViews()
-
+            
+            self.containerView.profileImageView.loadImage(urlString: avatarUrl)
             self.containerView.fullnameLabel.text = fullName
 
             let duration = NSInteger(audioReview.duration)
@@ -270,7 +270,6 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
             let minutes = (duration / 60) % 60
 
             self.containerView.audioLengthLabel.text = "\(minutes):\(seconds)"
-
             
             self.containerView.playOrPauseAudioAction = { [weak self] cell, progressView in
                 func tryPlay() {
@@ -333,7 +332,6 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         }
         return cell
     }
-    
     
 //        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 //            return 0
