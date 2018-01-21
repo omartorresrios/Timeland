@@ -119,20 +119,16 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         allowAutoRotate = false
         audioEnabled = true
         
-        if userSearchController.isViewLoaded {
-            print("userSearchController is LOADED")
-        }
     }
-    
-    let userSearchController = UserSearchController()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+    }
+    
+    func SetupSwiftyCamButton() {
         swiftyCamButton.delegate = self
         swiftyButton()
-    
-        
     }
     
     func handleLogout() {

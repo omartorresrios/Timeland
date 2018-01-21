@@ -159,7 +159,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("UserSearchController loaded")
         // Do any additional setup after loading the view, typically from a nib.
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
@@ -200,7 +199,11 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         messageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         // Initialize functions
-        loadAllUsers()
+        loadAllUsers { (success) in
+            if success {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+            }
+        }
         
         
 //        searchButton.adjustsImageWhenHighlighted = false
@@ -300,7 +303,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                 }
     }
     
-    func loadAllUsers() {
+    func loadAllUsers(completion: @escaping (Bool) -> ()) {
         // Check for internet connection
         if (reachability?.isReachable)! {
             
@@ -352,6 +355,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                         self.filteredUsers = self.users
                         self.collectionView.reloadData()
                         
+                        completion(true)
+                        
 //                        self.view.addSubview(self.searchButton)
 //                        self.searchButton.anchor(top: nil, left: nil, bottom: self.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 30, paddingRight: 0, width: 50, height: 50)
 //                        self.searchButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
@@ -361,6 +366,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                         
                     case .failure(let error):
                         print(error)
+                        completion(false)
                     }
                 }
             }
