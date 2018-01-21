@@ -48,6 +48,13 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         return indicator
     }()
     
+    let messageLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .black
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = .white
@@ -128,11 +135,18 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                     
                     print("\nTHE USER EVENTS: \(JSON)\n")
                     
+                    let jsonArray = JSON as! [[String: Any]]
+                    
+                    if jsonArray.count == 0 {
+                        self.view.addSubview(self.messageLabel)
+                        self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
+                        self.messageLabel.text = "No tiene momentos :("
+                        completion(true)
+                    }
+                    
                     for item in (JSON as? [[String: Any]])! {
                         guard let storieDictionary = item as? [String: Any] else { return }
                         print("\nstorieDictionary: \(storieDictionary)")
-                        
-                        //                        self.stories.append(storieDictionary)
                         
                         let event_url = storieDictionary["event_url"] as! String
                         let duration = storieDictionary["duration"] as! String

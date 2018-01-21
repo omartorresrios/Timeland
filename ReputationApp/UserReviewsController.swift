@@ -145,6 +145,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
                         self.view.addSubview(self.messageLabel)
                         self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
                         self.messageLabel.text = "No tiene reviews :("
+                        completion(true)
                     }
                     
                     reviewsArray.forEach({ (value) in
