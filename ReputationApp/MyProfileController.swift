@@ -17,9 +17,12 @@ class MyProfileController: UIViewController {
     
     let storiesOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .black
+//        button.backgroundColor = .white
+        button.layer.borderWidth = 3
+        button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Momentos", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.addTarget(self, action: #selector(showUserStoriesView), for: .touchUpInside)
         button.layer.cornerRadius = 25
         return button
@@ -27,9 +30,12 @@ class MyProfileController: UIViewController {
     
     let reviewsOptionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .black
+//        button.backgroundColor = .white
+        button.layer.borderWidth = 3
+        button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Reseñas", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.addTarget(self, action: #selector(showUserReviewsView), for: .touchUpInside)
         button.layer.cornerRadius = 25
         return button
@@ -38,14 +44,24 @@ class MyProfileController: UIViewController {
     let fullnameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .white
         label.numberOfLines = 0
         return label
+    }()
+    
+    let profileImageView: CustomImageView = {
+        let imageView = CustomImageView()
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 30
+        return imageView
     }()
     
     let gearIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .black
+        imageView.tintColor = .white
         return imageView
     }()
     
@@ -72,12 +88,11 @@ class MyProfileController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         navigationController?.navigationBar.isHidden = true
         
         setupUserInfo()
         setupTopViews()
-        setupOptionsButtons()
         setupOptionsButtons()
         
     }
@@ -87,15 +102,16 @@ class MyProfileController: UIViewController {
         guard let userEmail = Locksmith.loadDataForUserAccount(userAccount: "currentUserEmail") else { return }
         guard let userId = Locksmith.loadDataForUserAccount(userAccount: "currentUserId") else { return }
         guard let userUsername = Locksmith.loadDataForUserAccount(userAccount: "currentUsernameName") else { return }
-        guard let userAvatar = Locksmith.loadDataForUserAccount(userAccount: "currentAvatar") else { return }
+        guard let userAvatar = Locksmith.loadDataForUserAccount(userAccount: "currentUserAvatar") else { return }
         
         fullnameLabel.text = (userName as [String : AnyObject])["name"] as! String?
+        profileImageView.loadImage(urlString: ((userAvatar as [String : AnyObject])["avatar"] as! String?)!)
         
         userDictionary.updateValue((userId as [String : AnyObject])["id"] as! Int!, forKey: "id")
         userDictionary.updateValue((userName as [String : AnyObject])["name"] as! String!, forKey: "fullname")
         userDictionary.updateValue((userEmail as [String : AnyObject])["email"] as! String!, forKey: "email")
         userDictionary.updateValue((userUsername as [String : AnyObject])["username"] as! String!, forKey: "username")
-        userDictionary.updateValue((userAvatar as [String : AnyObject])["userAvatar"] as! String!, forKey: "avatarUrl")
+        userDictionary.updateValue((userAvatar as [String : AnyObject])["avatar"] as! String!, forKey: "avatar")
         
         let user = User(uid: (userId as [String : AnyObject])["id"] as! Int!, dictionary: userDictionary)
         
@@ -104,24 +120,28 @@ class MyProfileController: UIViewController {
     
     func setupTopViews() {
         view.addSubview(gearIcon)
-        gearIcon.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 25, height: 25)
+        gearIcon.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 10, width: 25, height: 25)
         gearIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSheetAction)))
         gearIcon.isUserInteractionEnabled = true
         
+        view.addSubview(profileImageView)
+        profileImageView.anchor(top: gearIcon.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 160, height: 160)
+        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
         view.addSubview(fullnameLabel)
-        fullnameLabel.anchor(top: gearIcon.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        fullnameLabel.anchor(top: profileImageView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
     }
     
     fileprivate func setupOptionsButtons() {
         let stackView = UIStackView(arrangedSubviews: [storiesOptionButton, reviewsOptionButton])
         
-        stackView.axis = .horizontal
+        stackView.axis = .vertical
         stackView.spacing = 10
         stackView.distribution = .fillEqually
         
         view.addSubview(stackView)
-        stackView.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 50)
-        stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        stackView.anchor(top: fullnameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 110)
+        stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     func handleSheetAction() {
@@ -163,5 +183,6 @@ class MyProfileController: UIViewController {
         try! Locksmith.deleteDataForUserAccount(userAccount: "AuthToken")
         try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserId")
         try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserName")
+        try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserAvatar")
     }
 }

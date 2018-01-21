@@ -45,15 +45,17 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
         googleButton.center = view.center
     }
     
-    func saveApiTokenInKeychain(tokenString: String, idInt: Int, nameString: String) {
+    func saveApiTokenInKeychain(tokenString: String, idInt: Int, nameString: String, avatarString: String) {
         // save API AuthToken in Keychain
         try! Locksmith.saveData(data: ["authenticationToken": tokenString], forUserAccount: "AuthToken")
         try! Locksmith.saveData(data: ["id": idInt], forUserAccount: "currentUserId")
         try! Locksmith.saveData(data: ["name": nameString], forUserAccount: "currentUserName")
+        try! Locksmith.saveData(data: ["avatar": avatarString], forUserAccount: "currentUserAvatar")
         
         print("AuthToken recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "AuthToken")!)")
         print("currentUserId recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserId")!)")
         print("currentUserName recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserName")!)")
+        print("currentUserAvatar recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserAvatar")!)")
         
     }
     
@@ -75,8 +77,6 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
         
         let emailRegEx = "[A-Z0-9a-z._%+-]+@(mambo)+\\.pe"
         let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        
-        
         
         if emailTest.evaluate(with: email) == true { // Valid email
             print("Eres mambero")
@@ -123,9 +123,10 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
                             let authToken = userJSON["authenticationToken"] as! String
                             let userId = userJSON["id"] as! Int
                             let userName = userJSON["fullname"] as! String
+                            let avatarUrl = userJSON["avatarUrl"] as! String
                             print("userJSON: \(userJSON)")
                             print("JSON: \(JSON)")
-                            self.saveApiTokenInKeychain(tokenString: authToken, idInt: userId, nameString: userName)
+                            self.saveApiTokenInKeychain(tokenString: authToken, idInt: userId, nameString: userName, avatarString: avatarUrl)
                             print("authToken: \(authToken)")
                             print("userId: \(userId)")
                             

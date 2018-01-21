@@ -435,9 +435,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         let reviewsEmoji = "👏".image()
         reviewsEmojiView.image = reviewsEmoji
         
-        reviewsLabel.font = UIFont.systemFont(ofSize: 14)
-        reviewsLabel.text = "Reseñas"
-        
         reviewsViewContainer.addSubview(reviewsEmojiView)
         reviewsViewContainer.addSubview(reviewsLabel)
         reviewsEmojiView.anchor(top: nil, left: reviewsViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

@@ -13,6 +13,7 @@ import AVFoundation
 import MediaPlayer
 import Alamofire
 import Locksmith
+import GoogleSignIn
 
 class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate, AVCapturePhotoCaptureDelegate {
     
@@ -118,17 +119,26 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         allowAutoRotate = false
         audioEnabled = true
         
+        if userSearchController.isViewLoaded {
+            print("userSearchController is LOADED")
+        }
     }
+    
+    let userSearchController = UserSearchController()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         swiftyCamButton.delegate = self
         swiftyButton()
+    
+        
     }
     
     func handleLogout() {
         clearLoggedinFlagInUserDefaults()
         clearAPITokensFromKeyChain()
+        GIDSignIn.sharedInstance().signOut()
         
         DispatchQueue.main.async {
             let loginController = LoginController()
@@ -151,6 +161,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         try! Locksmith.deleteDataForUserAccount(userAccount: "AuthToken")
         try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserId")
         try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserName")
+        try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserAvatar")
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
