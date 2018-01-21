@@ -399,15 +399,19 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     func setupUserInfoViewsContainers() {
         
-        view.addSubview(viewGeneral)
-        viewGeneral.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        viewGeneral.backgroundColor = .black
+        self.view.addSubview(self.viewGeneral)
+        self.viewGeneral.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        self.viewGeneral.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         
-        viewGeneral.addSubview(viewContainer)
-        viewContainer.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
-        viewContainer.backgroundColor = .white
-        viewContainer.layer.cornerRadius = 5
-        viewContainer.centerYAnchor.constraint(equalTo: viewGeneral.centerYAnchor).isActive = true
+        viewContainer.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            self.viewGeneral.addSubview(self.viewContainer)
+            self.viewContainer.anchor(top: nil, left: self.viewGeneral.leftAnchor, bottom: nil, right: self.viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
+            self.viewContainer.backgroundColor = .white
+            self.viewContainer.layer.cornerRadius = 5
+            self.viewContainer.centerYAnchor.constraint(equalTo: self.viewGeneral.centerYAnchor).isActive = true
+            self.viewContainer.transform = .identity
+        }, completion: nil)
         
         viewContainer.addSubview(storiesViewContainer)
         storiesViewContainer.anchor(top: viewContainer.topAnchor, left: viewContainer.leftAnchor, bottom: nil, right: viewContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150 / 3)
@@ -500,11 +504,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }()
     
     func dismissContainerView() {
-        
-        
         viewGeneral.removeFromSuperview()
-        
-        
         view.removeGestureRecognizer(tap)
     }
     
@@ -556,17 +556,3 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
 }
 
-extension String {
-    func image() -> UIImage {
-        let size = CGSize(width: 30, height: 35)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0);
-        UIColor.white.set()
-        let rect = CGRect(origin: CGPoint.zero, size: size)
-        UIRectFill(CGRect(origin: CGPoint.zero, size: size))
-        (self as NSString).draw(in: rect, withAttributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 30)])
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image!
-    }
-    
-}
