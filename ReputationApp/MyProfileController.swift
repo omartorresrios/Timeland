@@ -22,7 +22,7 @@ class MyProfileController: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Momentos", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 16)
         button.addTarget(self, action: #selector(showUserStoriesView), for: .touchUpInside)
         button.layer.cornerRadius = 25
         return button
@@ -35,7 +35,7 @@ class MyProfileController: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Reseñas", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 16)
         button.addTarget(self, action: #selector(showUserReviewsView), for: .touchUpInside)
         button.layer.cornerRadius = 25
         return button
@@ -44,7 +44,7 @@ class MyProfileController: UIViewController {
     let fullnameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
         label.textColor = .white
         label.numberOfLines = 0
         return label

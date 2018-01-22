@@ -481,7 +481,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     let storiesLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         label.text = "Momentos"
         label.textAlignment = .left
         return label
@@ -489,7 +490,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     let reviewsLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         label.text = "Reseñas"
         label.textAlignment = .left
         return label
@@ -497,7 +499,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     let writeLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         label.text = "Deja una reseña"
         label.textAlignment = .left
         return label

@@ -58,7 +58,8 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0:00"
         label.textColor = .black
-        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.font = UIFont(name: "SFUIDisplay-Semibold", size: 14)
         label.textAlignment = .right
         return label
     }()

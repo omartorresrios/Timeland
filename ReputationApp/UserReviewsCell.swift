@@ -14,8 +14,8 @@ class UserReviewsCell: UICollectionViewCell {
     
     let fullnameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
-        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -91,7 +91,7 @@ class UserReviewsCell: UICollectionViewCell {
     let timeLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray
-        label.font = UIFont(name: "SFUIDisplay-Medium", size: 12)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 12)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.text = "hoy"

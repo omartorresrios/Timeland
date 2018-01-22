@@ -12,8 +12,8 @@ class PreviewAudioContainerView: UIView {
     
     let fullnameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 13)//(name: "SFUIDisplay-Medium", size: 14)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
         label.textAlignment = .left
         return label
     }()
@@ -69,8 +69,8 @@ class PreviewAudioContainerView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0:00"
-        label.textColor = .black
-        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.font = UIFont(name: "SFUIDisplay-Semibold", size: 14)
         label.textAlignment = .right
         return label
     }()

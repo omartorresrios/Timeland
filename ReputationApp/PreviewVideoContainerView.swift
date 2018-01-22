@@ -15,12 +15,12 @@ class PreviewVideoContainerView: UIViewController {
     
     let userNameLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont(name: "SFUIDisplay-Semibold", size: 16)
         label.textColor = .white
         label.backgroundColor = .clear
         label.layer.shadowOffset = CGSize(width: 0, height: 0)
         label.layer.shadowOpacity = 1
         label.layer.shadowRadius = 6
-        label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
     
@@ -28,12 +28,12 @@ class PreviewVideoContainerView: UIViewController {
     
     let videoLengthLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont(name: "SFUIDisplay-Semibold", size: 13)
         label.textColor = .white
         label.backgroundColor = .clear
         label.layer.shadowOffset = CGSize(width: 0, height: 0)
         label.layer.shadowOpacity = 1
         label.layer.shadowRadius = 6
-        label.font = UIFont.systemFont(ofSize: 12)
         label.text = "0:00"
         return label
     }()
@@ -51,7 +51,7 @@ class PreviewVideoContainerView: UIViewController {
         userNameLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         view.addSubview(videoLengthLabel)
-        videoLengthLabel.anchor(top: userNameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        videoLengthLabel.anchor(top: userNameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
     }
     
