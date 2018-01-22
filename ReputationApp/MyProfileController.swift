@@ -66,23 +66,23 @@ class MyProfileController: UIViewController {
     }()
     
     func showUserReviewsView() {
-        let userReviewsController = UserReviewsController(collectionViewLayout: UICollectionViewFlowLayout())
+        let myReviewsController = MyReviewsController(collectionViewLayout: UICollectionViewFlowLayout())
         
-        userReviewsController.userId = userSelected.id
-        userReviewsController.userFullname = userSelected.fullname
-        userReviewsController.userImageUrl = userSelected.profileImageUrl
+        myReviewsController.userId = userSelected.id
+        myReviewsController.userFullname = userSelected.fullname
+        myReviewsController.userImageUrl = userSelected.profileImageUrl
         
-        present(userReviewsController, animated: true, completion: nil)
+        present(myReviewsController, animated: true, completion: nil)
     }
     
     func showUserStoriesView() {
-        let userStoriesController = UserStoriesController(collectionViewLayout: UICollectionViewFlowLayout())
+        let myStoriesController = MyStoriesController(collectionViewLayout: UICollectionViewFlowLayout())
         
-        userStoriesController.userId = userSelected.id
-        userStoriesController.userFullname = userSelected.fullname
-        userStoriesController.userImageUrl = userSelected.profileImageUrl
+        myStoriesController.userId = userSelected.id
+        myStoriesController.userFullname = userSelected.fullname
+        myStoriesController.userImageUrl = userSelected.profileImageUrl
         
-        present(userStoriesController, animated: true, completion: nil)
+        present(myStoriesController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {

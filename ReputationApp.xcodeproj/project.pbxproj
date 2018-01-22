@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A024935A20155381006B3199 /* MyReviewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935920155381006B3199 /* MyReviewsController.swift */; };
+		A024935C20155DFB006B3199 /* MyStoriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935B20155DFA006B3199 /* MyStoriesController.swift */; };
 		A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A02B3791200BC8990062CF4F /* GoogleService-Info.plist */; };
 		A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02B3793200C45A80062CF4F /* MyProfileCell.swift */; };
 		A035D7E21FF925800063706B /* UserReviewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E11FF925800063706B /* UserReviewsCell.swift */; };
@@ -78,6 +80,8 @@
 
 /* Begin PBXFileReference section */
 		6E28B6B66614A10E560EF10A /* Pods-ReputationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReputationApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReputationApp/Pods-ReputationApp.release.xcconfig"; sourceTree = "<group>"; };
+		A024935920155381006B3199 /* MyReviewsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReviewsController.swift; sourceTree = "<group>"; };
+		A024935B20155DFA006B3199 /* MyStoriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyStoriesController.swift; sourceTree = "<group>"; };
 		A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Signin-Bridging-Header.h"; sourceTree = "<group>"; };
 		A02B3791200BC8990062CF4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A02B3793200C45A80062CF4F /* MyProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileCell.swift; sourceTree = "<group>"; };
@@ -258,6 +262,8 @@
 			children = (
 				A070FE1C1FA11C9500488431 /* MyProfileController.swift */,
 				A02B3793200C45A80062CF4F /* MyProfileCell.swift */,
+				A024935920155381006B3199 /* MyReviewsController.swift */,
+				A024935B20155DFA006B3199 /* MyStoriesController.swift */,
 			);
 			name = MyProfile;
 			sourceTree = "<group>";
@@ -610,6 +616,7 @@
 				A07B957C1F2D82F8008E9EA0 /* UserSearchHeader.swift in Sources */,
 				A0F36A431ECA154F0072B5DD /* NSData+Base64.m in Sources */,
 				A0EF64241EC407D7006609F7 /* LoginController.swift in Sources */,
+				A024935C20155DFB006B3199 /* MyStoriesController.swift in Sources */,
 				A07B3C401EDB83EE00F10657 /* UserProfileController.swift in Sources */,
 				A035D7E61FF927D50063706B /* User1.swift in Sources */,
 				A035D7E41FF9259C0063706B /* PreviewAudioContainerView.swift in Sources */,
@@ -628,6 +635,7 @@
 				A070FE1D1FA11C9500488431 /* MyProfileController.swift in Sources */,
 				A0F254201F8A80B000FC234A /* CustomAnimationPresentor.swift in Sources */,
 				A07B3BCC1ED8C66000F10657 /* Extensions.swift in Sources */,
+				A024935A20155381006B3199 /* MyReviewsController.swift in Sources */,
 				A0D0542F1FDB6BF400C738F5 /* VerticalScrollViewController.swift in Sources */,
 				A0F0B7561EDF1DD1005DBD4D /* UserProfileHeader.swift in Sources */,
 				A07B3C371ED91DCC00F10657 /* UserSearchController.swift in Sources */,

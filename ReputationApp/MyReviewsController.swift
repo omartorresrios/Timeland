@@ -1,9 +1,9 @@
 //
-//  UserReviewsController.swift
+//  MyReviewsController.swift
 //  ReputationApp
 //
-//  Created by Omar Torres on 10/12/17.
-//  Copyright © 2017 OmarTorres. All rights reserved.
+//  Created by Omar Torres on 21/01/18.
+//  Copyright © 2018 OmarTorres. All rights reserved.
 //
 
 import UIKit
@@ -14,7 +14,7 @@ import MediaPlayer
 
 private let cellId = "cellId"
 
-class UserReviewsController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
+class MyReviewsController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
     
     var userId: Int?
     var userFullname: String?
@@ -28,6 +28,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
     
     let messageLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
@@ -123,17 +124,9 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
     func showMessageOfZeroContent() {
         
         self.view.addSubview(self.messageLabel)
-        self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
         self.messageLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        
-        guard let boldNameFont = UIFont(name: "SFUIDisplay-Semibold", size: 15) else { return }
-        guard let normalFont = UIFont(name: "SFUIDisplay-Regular", size: 15) else { return }
-        
-        let attributedMessage = NSMutableAttributedString(string: "\(self.userFullname!)", attributes: [NSFontAttributeName: boldNameFont])
-
-        attributedMessage.append(NSMutableAttributedString(string: " aún no tiene reviews 😲", attributes: [NSFontAttributeName: normalFont]))
-        
-        self.messageLabel.attributedText = attributedMessage
+        self.messageLabel.text = "Aún no tienes reseñas 😲"
         
     }
     
@@ -258,14 +251,14 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         
         var review = reviews[indexPath.item]
         var audioReview = reviewAudios[indexPath.item]
-
+        
         var receiverData = review["receiver"] as! [String: Any]
-
+        
         var senderData = review["sender"] as! [String: Any]
         
         let fullName = senderData["fullname"] as! String
         cell.fullnameLabel.text = fullName
-
+        
         let avatarUrl = senderData["avatarUrl"] as! String
         cell.profileImageView.loadImage(urlString: avatarUrl)
         
@@ -293,30 +286,30 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         print("EXACT_DATE : \(dateString)")
         
         cell.timeLabel.text = date.timeAgoDisplay()
-
+        
         cell.goToListen = {
             
             self.setupReviewInfoViews()
             
             self.containerView.profileImageView.loadImage(urlString: avatarUrl)
             self.containerView.fullnameLabel.text = fullName
-
+            
             let duration = NSInteger(audioReview.duration)
             let seconds = String(format: "%02d", duration % 60)
             let minutes = (duration / 60) % 60
-
+            
             self.containerView.audioLengthLabel.text = "\(minutes):\(seconds)"
             
             self.containerView.playOrPauseAudioAction = { [weak self] cell, progressView in
                 func tryPlay() {
                     do {
                         AudioBot.reportPlayingDuration = { duration in
-
+                            
                             let ti = NSInteger(duration)
-
+                            
                             let seconds = String(format: "%02d", ti % 60)
                             let minutes = String(format: "%2d", (ti / 60) % 60)
-
+                            
                             self?.containerView.audioLengthLabel.text = "\(minutes):\(seconds)"
                         }
                         let progressPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { progress in
@@ -324,7 +317,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
                             audioReview.progress = CGFloat(progress)
                             progressView.progress = progress
                         })
-
+                        
                         let fromTime = TimeInterval(audioReview.progress) * audioReview.duration
                         try AudioBot.startPlayAudioAtFileURL(audioReview.fileURL, fromTime: fromTime, withProgressPeriodicReport: progressPeriodicReport, finish: { success in
                             audioReview.playing = false
@@ -341,7 +334,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
                     AudioBot.pausePlay()
                     audioReview.playing = false
                     cell.playing = false
-
+                    
                     //                tryPlay()
                     //                review.playing = false
                     //                cell.playing = false
@@ -369,13 +362,13 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
         return cell
     }
     
-//        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//            return 0
-//        }
+    //        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    //            return 0
+    //        }
     
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            return 1
-        }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = view.frame.width

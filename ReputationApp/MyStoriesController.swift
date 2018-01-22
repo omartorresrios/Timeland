@@ -1,9 +1,9 @@
 //
-//  UserStoriesController.swift
+//  MyStoriesController.swift
 //  ReputationApp
 //
-//  Created by Omar Torres on 10/12/17.
-//  Copyright © 2017 OmarTorres. All rights reserved.
+//  Created by Omar Torres on 21/01/18.
+//  Copyright © 2018 OmarTorres. All rights reserved.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ import Alamofire
 import Haneke
 import MediaPlayer
 
-class UserStoriesController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class MyStoriesController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var userId: Int?
     var userFullname: String?
@@ -51,8 +51,9 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     let messageLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
+        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
         label.numberOfLines = 0
+        label.textAlignment = .center
         label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         return label
     }()
@@ -113,17 +114,9 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     func showMessageOfZeroContent() {
         
         self.view.addSubview(self.messageLabel)
-        self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        self.messageLabel.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
         self.messageLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        
-        guard let boldNameFont = UIFont(name: "SFUIDisplay-Semibold", size: 15) else { return }
-        guard let normalFont = UIFont(name: "SFUIDisplay-Regular", size: 15) else { return }
-        
-        let attributedMessage = NSMutableAttributedString(string: "\(self.userFullname!)", attributes: [NSFontAttributeName: boldNameFont])
-        
-        attributedMessage.append(NSMutableAttributedString(string: " aún no tiene momentos 😒", attributes: [NSFontAttributeName: normalFont]))
-        
-        self.messageLabel.attributedText = attributedMessage
+        self.messageLabel.text = "Aún no tienes momentos 😒"
         
     }
     
@@ -207,10 +200,10 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     
     // define a variable to store initial touch position
     var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
-
+    
     func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
         let touchPoint = sender.location(in: self.previewVideoContainerView.view?.window)
-
+        
         if sender.state == UIGestureRecognizerState.began {
             initialTouchPoint = touchPoint
         } else if sender.state == UIGestureRecognizerState.changed {
@@ -241,10 +234,10 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
         
-//        let image = self.images[indexPath.item].absoluteString!
-//        let url = self.urls[indexPath.item]
+        //        let image = self.images[indexPath.item].absoluteString!
+        //        let url = self.urls[indexPath.item]
         let event = eventVideos[indexPath.item]
-//        let storie = stories[indexPath.item]
+        //        let storie = stories[indexPath.item]
         
         let createdAt = event.createdAt//storie["created_at"] as! String
         let fullname = event.userFullname//storie["user_fullname"] as! String
@@ -269,36 +262,36 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             
             assetImgGenerate.appliesPreferredTrackTransform = true
             
-                let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
-                var img         : CGImage
+            let time        : CMTime = CMTimeMakeWithSeconds(durationSeconds/3.0, 600)
+            var img         : CGImage
+            
+            do {
+                img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
+                let frameImg: UIImage = UIImage(cgImage: img)
                 
-                do {
-                    img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
-                    let frameImg: UIImage = UIImage(cgImage: img)
-                    
-                    if url.absoluteString != lastURLUsedToLoadImage {
-                        print("nothing")
-                    }
-                    
-                    imageCache[url.absoluteString] = frameImg
-                    
-                    DispatchQueue.main.async {
-                        cell.photoImageView.image =  frameImg
-                    }
-                    
-                } catch let error as NSError {
-                    print("ERROR: \(error)")
-                    cell.photoImageView.image = nil
+                if url.absoluteString != lastURLUsedToLoadImage {
+                    print("nothing")
                 }
+                
+                imageCache[url.absoluteString] = frameImg
+                
+                DispatchQueue.main.async {
+                    cell.photoImageView.image =  frameImg
+                }
+                
+            } catch let error as NSError {
+                print("ERROR: \(error)")
+                cell.photoImageView.image = nil
+            }
             
         } else {
             print("THE URL DOES NOT EXIST")
         }
         
-//        let duration = NSInteger(event.duration)
-//        let seconds = String(format: "%02d", duration % 60)
-//        let minutes = (duration / 60) % 60
-//        cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
+        //        let duration = NSInteger(event.duration)
+        //        let seconds = String(format: "%02d", duration % 60)
+        //        let minutes = (duration / 60) % 60
+        //        cell.videoLengthLabel.setTitle("\(minutes):\(seconds)", for: .normal)
         
         cell.goToWatch = {
             
@@ -319,14 +312,14 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             // deleting the Z in the final
             let zEndIndex = createdAt.index(createdAt.endIndex, offsetBy: -1)
             let finalWihtOutZ = createdAt.substring(to: zEndIndex)
-
+            
             // deleting the last 3 characters
             let last4endIndex = finalWihtOutZ.index(finalWihtOutZ.endIndex, offsetBy: -4)
             let finalWihtOut4 = finalWihtOutZ.substring(to: last4endIndex)
-
+            
             // adding the Z to the end
             let finalCreatedAt = finalWihtOut4 + "Z"
-
+            
             let dateFormatter = DateFormatter()
             let tempLocale = dateFormatter.locale // save locale temporarily
             dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
@@ -362,7 +355,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 8
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 8
     }
