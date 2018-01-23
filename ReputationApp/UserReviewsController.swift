@@ -56,7 +56,7 @@ class UserReviewsController: UICollectionViewController, UICollectionViewDelegat
             layout.scrollDirection = .vertical
             layout.minimumLineSpacing = 0
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 31, left: 0, bottom: 0, right: 0)
+            layout.sectionInset = UIEdgeInsets(top: 46, left: 0, bottom: 0, right: 0)
         }
         
         collectionView?.register(UserReviewsCell.self, forCellWithReuseIdentifier: cellId)

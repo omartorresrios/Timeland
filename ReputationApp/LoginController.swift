@@ -12,10 +12,30 @@ import Locksmith
 import GoogleSignIn
 import Google
 
-class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
+class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate, UIGestureRecognizerDelegate {
     
     let googleButton = GIDSignInButton()
     var imageData: Data?
+    var tap = UITapGestureRecognizer()
+    
+    let viewMessage: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
+    let labelMessage: UILabel = {
+        let label = UILabel()
+        label.text = "🖐\n\n¡No eres mambero! Debes entrar con tu correo de Mambo 😉"
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 15)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white//UIColor.rgb(red: 25, green: 25, blue: 25)
+        return label
+    }()
     
     func updateUserLoggedInFlag() {
         // Update the NSUserDefaults flag
@@ -45,6 +65,11 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
         googleButton.center = view.center
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     func saveApiTokenInKeychain(tokenString: String, idInt: Int, nameString: String, avatarString: String) {
         // save API AuthToken in Keychain
         try! Locksmith.saveData(data: ["authenticationToken": tokenString], forUserAccount: "AuthToken")
@@ -57,6 +82,40 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
         print("currentUserName recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserName")!)")
         print("currentUserAvatar recién guardado: \(Locksmith.loadDataForUserAccount(userAccount: "currentUserAvatar")!)")
         
+    }
+    
+    func showMessage() {
+        DispatchQueue.main.async {
+            
+            self.viewMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                self.view.addSubview(self.viewMessage)
+                
+                self.viewMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                self.viewMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                
+                self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+                self.view.addGestureRecognizer(self.tap)
+                self.tap.delegate = self
+                
+                self.viewMessage.addSubview(self.labelMessage)
+                self.labelMessage.anchor(top: self.viewMessage.topAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+            
+                self.viewMessage.transform = .identity
+            }, completion: nil)
+        }
+    }
+    
+    func dismissviewMessage() {
+        viewMessage.removeFromSuperview()
+        view.removeGestureRecognizer(tap)
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: viewMessage))!{
+            return false
+        }
+        return true
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
@@ -148,6 +207,8 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
             GIDSignIn.sharedInstance().signOut()
             
             print("No eres mambero")
+            
+            showMessage()
             
         }
         
