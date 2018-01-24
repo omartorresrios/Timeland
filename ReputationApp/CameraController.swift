@@ -49,7 +49,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!, completion: { (success) in
                 if success {
                     self.blurView.removeFromSuperview()
-                    self.sendButton.removeFromSuperview()
+                    self.sendButtomImageView.removeFromSuperview()
                     let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
                     appDel.logUser(forAppDelegate: false)
 
@@ -103,7 +103,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let swiftyCamButton: SwiftyCamButton = {
         let button = SwiftyCamButton()
-        button.backgroundColor = .gray
+        button.backgroundColor = .white
         button.layer.cornerRadius = 40
         button.isUserInteractionEnabled = false
         return button
@@ -111,14 +111,8 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     func swiftyButton() {
         
-        view.addSubview(fakeView)
-        fakeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        
-        view.layer.zPosition = -3
-        
         view.addSubview(swiftyCamButton)
         swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
-        swiftyCamButton.layer.zPosition = 2
         swiftyCamButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         let button = UIButton()
@@ -141,18 +135,35 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         allowAutoRotate = false
         audioEnabled = true
         
+        fakeViews()
+    }
+    
+    func fakeViews() {
+        view.addSubview(fakeView)
+        fakeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.addSubview(fakeButton)
+        fakeButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
+        fakeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        swiftyButton()
         NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
     }
     
     func SetupSwiftyCamButton() {
         swiftyCamButton.delegate = self
         fakeView.removeFromSuperview()
-        swiftyCamButton.backgroundColor = .white
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
+            self.fakeButton.removeFromSuperview()
+        }, completion: nil)
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
+            self.swiftyButton()
+        }, completion: nil)
+        
         swiftyCamButton.isUserInteractionEnabled = true
     }
     
@@ -233,12 +244,17 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return view
     }()
     
-    let sendButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Enviar", for: .normal)
-        button.tintColor = .white
-        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        return button
+    let sendView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.layer.cornerRadius = 25
+        return view
+    }()
+    
+    let sendButtomImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "hand")
+        return iv
     }()
     
     func setupBlurView() {
@@ -247,10 +263,16 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     }
     
     func setupSendButton() {
-        blurView.addSubview(sendButton)
-        sendButton.anchor(top: nil, left: blurView.leftAnchor, bottom: nil, right: blurView.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
-        sendButton.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+        
+        blurView.addSubview(sendView)
+        sendView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
+        sendView.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
+        sendView.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+        
+        sendView.addSubview(sendButtomImageView)
+        sendButtomImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
+        sendButtomImageView.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
+        sendButtomImageView.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
