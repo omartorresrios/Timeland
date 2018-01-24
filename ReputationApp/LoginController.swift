@@ -33,7 +33,6 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         label.textAlignment = .center
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .white//UIColor.rgb(red: 25, green: 25, blue: 25)
         return label
     }()
     

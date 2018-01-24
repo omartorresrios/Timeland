@@ -87,16 +87,38 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         
     }
     
-    let swiftyCamButton: SwiftyCamButton = {
-        let button = SwiftyCamButton()
-        button.backgroundColor = .white
+    let fakeView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        return view
+    }()
+    
+    let fakeButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .gray
+        button.isUserInteractionEnabled = false
         button.layer.cornerRadius = 40
         return button
     }()
     
+    let swiftyCamButton: SwiftyCamButton = {
+        let button = SwiftyCamButton()
+        button.backgroundColor = .gray
+        button.layer.cornerRadius = 40
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+    
     func swiftyButton() {
+        
+        view.addSubview(fakeView)
+        fakeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.layer.zPosition = -3
+        
         view.addSubview(swiftyCamButton)
         swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
+        swiftyCamButton.layer.zPosition = 2
         swiftyCamButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         let button = UIButton()
@@ -123,12 +145,15 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        swiftyButton()
         NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
     }
     
     func SetupSwiftyCamButton() {
         swiftyCamButton.delegate = self
-        swiftyButton()
+        fakeView.removeFromSuperview()
+        swiftyCamButton.backgroundColor = .white
+        swiftyCamButton.isUserInteractionEnabled = true
     }
     
     func handleLogout() {
