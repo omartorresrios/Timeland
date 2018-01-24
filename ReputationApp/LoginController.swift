@@ -36,6 +36,24 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         return label
     }()
     
+    let customLoginView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 20
+        return view
+    }()
+    
+    let customLoginButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "logo_google").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    func handleLogin() {
+        GIDSignIn.sharedInstance().signIn()
+    }
+    
     func updateUserLoggedInFlag() {
         // Update the NSUserDefaults flag
         let defaults = UserDefaults.standard
@@ -46,7 +64,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         
         var error: NSError?
         
@@ -60,8 +78,20 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         GIDSignIn.sharedInstance().uiDelegate = self
         GIDSignIn.sharedInstance().delegate = self
         
-        view.addSubview(googleButton)
-        googleButton.center = view.center
+        setupCustomLoginButton()
+    }
+    
+    func setupCustomLoginButton() {
+        view.addSubview(customLoginView)
+        customLoginView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 40, height: 40)
+        customLoginView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        customLoginView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        customLoginView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLogin)))
+        
+        customLoginView.addSubview(customLoginButton)
+        customLoginButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 25, height: 25)
+        customLoginButton.centerYAnchor.constraint(equalTo: customLoginView.centerYAnchor).isActive = true
+        customLoginButton.centerXAnchor.constraint(equalTo: customLoginView.centerXAnchor).isActive = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
