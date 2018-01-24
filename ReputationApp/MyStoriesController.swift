@@ -44,8 +44,6 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
     let loader: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         indicator.alpha = 1.0
-        indicator.startAnimating()
-        indicator.isHidden = false
         return indicator
     }()
     
@@ -73,12 +71,18 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
         collectionView?.register(UserFeedCell.self, forCellWithReuseIdentifier: userFeedCell)
         collectionView?.isPagingEnabled = false
         
+        view.addSubview(loader)
+        loader.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 60, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
+        loader.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        loader.startAnimating()
+        
         loadUserEventsWithCloseButton()
     }
     
     func loadUserEventsWithCloseButton() {
         loadUserEvents { (success) in
             if success {
+                self.loader.stopAnimating()
                 self.view.addSubview(self.closeView)
                 self.closeView.anchor(top: self.view.topAnchor, left: nil, bottom: nil, right: self.view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
                 self.closeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.closeViewController)))

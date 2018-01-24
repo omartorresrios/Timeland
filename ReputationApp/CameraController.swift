@@ -268,11 +268,13 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         sendView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
         sendView.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
         sendView.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+        sendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
         
         sendView.addSubview(sendButtomImageView)
         sendButtomImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
         sendButtomImageView.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
         sendButtomImageView.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
+        sendButtomImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
