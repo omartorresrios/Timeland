@@ -21,15 +21,21 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     let viewMessage: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        view.backgroundColor = .white
         view.layer.cornerRadius = 10
         return view
     }()
     
+    let iconMessage: UIImageView = {
+        let iv = UIImageView()
+        return iv
+    }()
+    
     let labelMessage: UILabel = {
         let label = UILabel()
-        label.text = "🖐\n\n¡No eres mambero! Debes entrar con tu correo de Mambo 😉"
-        label.font = UIFont(name: "SFUIDisplay-Medium", size: 15)
+        label.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 16)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -127,8 +133,14 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
                 self.view.addGestureRecognizer(self.tap)
                 self.tap.delegate = self
                 
+                self.iconMessage.image = "✋".image()
+                
+                self.viewMessage.addSubview(self.iconMessage)
+                self.iconMessage.anchor(top: self.viewMessage.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                self.iconMessage.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+                
                 self.viewMessage.addSubview(self.labelMessage)
-                self.labelMessage.anchor(top: self.viewMessage.topAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+                self.labelMessage.anchor(top: self.iconMessage.bottomAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
             
                 self.viewMessage.transform = .identity
             }, completion: nil)
