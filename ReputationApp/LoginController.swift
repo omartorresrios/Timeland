@@ -17,30 +17,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     let googleButton = GIDSignInButton()
     var imageData: Data?
     var tap = UITapGestureRecognizer()
-    
-    let viewMessage: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 10
-        return view
-    }()
-    
-    let iconMessage: UIImageView = {
-        let iv = UIImageView()
-        return iv
-    }()
-    
-    let labelMessage: UILabel = {
-        let label = UILabel()
-        label.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
-        label.font = UIFont(name: "SFUIDisplay-Medium", size: 16)
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    let customAlertMessage = CustomAlertMessage()
     
     let customLoginView: UIView = {
         let view = UIView()
@@ -119,44 +96,29 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         
     }
     
-    func showMessage() {
-        DispatchQueue.main.async {
-            
-            self.viewMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                self.view.addSubview(self.viewMessage)
-                
-                self.viewMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-                self.viewMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-                
-                self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
-                self.view.addGestureRecognizer(self.tap)
-                self.tap.delegate = self
-                
-                self.iconMessage.image = "✋".image()
-                
-                self.viewMessage.addSubview(self.iconMessage)
-                self.iconMessage.anchor(top: self.viewMessage.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-                self.iconMessage.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-                
-                self.viewMessage.addSubview(self.labelMessage)
-                self.labelMessage.anchor(top: self.iconMessage.bottomAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
-            
-                self.viewMessage.transform = .identity
-            }, completion: nil)
-        }
-    }
-    
     func dismissviewMessage() {
-        viewMessage.removeFromSuperview()
+        customAlertMessage.removeFromSuperview()
         view.removeGestureRecognizer(tap)
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: viewMessage))!{
+        if (touch.view?.isDescendant(of: customAlertMessage))!{
             return false
         }
         return true
+    }
+    
+    func showCustomAlertMessage() {
+        self.view.addSubview(customAlertMessage)
+        customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        
+        customAlertMessage.iconMessage.image = "✋".image()
+        customAlertMessage.labelMessage.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
+        
+        self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+        self.view.addGestureRecognizer(self.tap)
+        self.tap.delegate = self
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
@@ -249,7 +211,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
             
             print("No eres mambero")
             
-            showMessage()
+            self.showCustomAlertMessage()
             
         }
         

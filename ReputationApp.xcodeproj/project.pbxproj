@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A024935A20155381006B3199 /* MyReviewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935920155381006B3199 /* MyReviewsController.swift */; };
 		A024935C20155DFB006B3199 /* MyStoriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935B20155DFA006B3199 /* MyStoriesController.swift */; };
+		A025EDBE201FAFEE00594000 /* CustomAlertMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */; };
 		A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A02B3791200BC8990062CF4F /* GoogleService-Info.plist */; };
 		A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02B3793200C45A80062CF4F /* MyProfileCell.swift */; };
 		A035D7E21FF925800063706B /* UserReviewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E11FF925800063706B /* UserReviewsCell.swift */; };
@@ -82,6 +83,7 @@
 		6E28B6B66614A10E560EF10A /* Pods-ReputationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReputationApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReputationApp/Pods-ReputationApp.release.xcconfig"; sourceTree = "<group>"; };
 		A024935920155381006B3199 /* MyReviewsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReviewsController.swift; sourceTree = "<group>"; };
 		A024935B20155DFA006B3199 /* MyStoriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyStoriesController.swift; sourceTree = "<group>"; };
+		A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertMessage.swift; sourceTree = "<group>"; };
 		A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Signin-Bridging-Header.h"; sourceTree = "<group>"; };
 		A02B3791200BC8990062CF4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A02B3793200C45A80062CF4F /* MyProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileCell.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				A0EF641C1EC40758006609F7 /* Info.plist */,
 				A07B3BC51ED7810E00F10657 /* Constants.swift */,
 				A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */,
+				A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */,
 			);
 			name = "Supporting files";
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				A0F36A451ECA154F0072B5DD /* NSString+Base64.m in Sources */,
 				A0F36A441ECA154F0072B5DD /* NSData+CommonCrypto.m in Sources */,
 				A0F872A81FF9295B00EAF27A /* FileManager+VoiceMemo.swift in Sources */,
+				A025EDBE201FAFEE00594000 /* CustomAlertMessage.swift in Sources */,
 				A0F254181F89C2FD00FC234A /* PreviewPhotoContainerView.swift in Sources */,
 				A0F2541F1F8A80B000FC234A /* CustomAnimationDismisser.swift in Sources */,
 				A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */,

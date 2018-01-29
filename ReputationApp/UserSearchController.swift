@@ -10,11 +10,11 @@ import UIKit
 import Alamofire
 import Locksmith
 import AVFoundation
-//import googleapis
+import googleapis
 
-//let SAMPLE_RATE = 16000
+let SAMPLE_RATE = 16000
 
-class UserSearchController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate/*, AudioControllerDelegate*/ {
+class UserSearchController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, AudioControllerDelegate {
     
     let httpHelper = HTTPHelper()
     let cellId = "cellId"
@@ -23,7 +23,10 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     var currentUserDic = [String: Any]()
     var collectionView: UICollectionView!
     var userSelected: User!
-//    var audioData: NSMutableData!
+    var audioData: NSMutableData!
+    let customAlertMessage = CustomAlertMessage()
+    var tap = UITapGestureRecognizer()
+    var alertTap = UITapGestureRecognizer()
     
     let loader: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
@@ -32,9 +35,16 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         return indicator
     }()
     
+    let processSpeechLoader: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        indicator.alpha = 1.0
+        indicator.startAnimating()
+        return indicator
+    }()
+    
     let messageLabel: UILabel = {
         let ml = UILabel()
-        ml.font = UIFont.systemFont(ofSize: 12)
+        ml.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
         ml.numberOfLines = 0
         ml.textAlignment = .center
         return ml
@@ -46,116 +56,129 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         return view
     }()
     
-    var tap = UITapGestureRecognizer()
+    let searchButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .gray
+        button.addTarget(self, action: #selector(recordAudio(_:)), for: .touchUpInside)
+        return button
+    }()
+
+    let stopButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Otra búsqueda", for: .normal)
+        button.backgroundColor = .black
+        button.addTarget(self, action: #selector(stopAudio(_:)), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
     
+    let resetButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("busca otra", for: .normal)
+        button.backgroundColor = .black
+        button.addTarget(self, action: #selector(resetAudio), for: .touchUpInside)
+        return button
+    }()
     
-//    let searchButton: UIButton = {
-//        let button = UIButton()
-//        button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
-//        button.tintColor = .gray
-//        button.addTarget(self, action: #selector(recordAudio(_:)), for: .touchUpInside)
-//        return button
-//    }()
-//
-//    let resultLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "HELLO 2018"
-//        label.numberOfLines = 0
-//        label.textColor = .white
-//        return label
-//    }()
-//
-//    let stopButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("Otra búsqueda", for: .normal)
-//        button.backgroundColor = .black
-//        button.addTarget(self, action: #selector(stopAudio(_:)), for: .touchUpInside)
-//        return button
-//    }()
+    func wordForSearch(word: String) {
+        filteredUsers = self.users.filter { (user) -> Bool in
+            return user.fullname.lowercased().contains(word.lowercased())
+        }
+        
+        // Check is there are results
+        if filteredUsers.isEmpty {
+            messageLabel.isHidden = false
+            messageLabel.text = "🙁 No encontramos a esa persona."
+            searchButton.tintColor = .gray
+            loader.stopAnimating()
+        } else {
+            messageLabel.isHidden = true
+            loader.stopAnimating()
+        }
+
+        collectionView?.reloadData()
+        
+    }
     
-//    func wordForSearch(word: String) {
-//        filteredUsers = self.users.filter { (user) -> Bool in
-//            return user.fullname.lowercased().contains(word.lowercased())
-//        }
-//
-//        // Check is there are results
-//        if filteredUsers.isEmpty {
-//            messageLabel.isHidden = false
-//            messageLabel.text = "🙁 No encontramos a esa persona."
-//            searchButton.tintColor = .gray
-//            loader.stopAnimating()
-//        } else {
-//            messageLabel.isHidden = true
-//        }
-//
-//        collectionView?.reloadData()
-//    }
-//
-//    func processSampleData(_ data: Data) -> Void {
-//
-//        audioData.append(data)
-//
-//        // We recommend sending samples in 100ms chunks
-//        let chunkSize : Int /* bytes/chunk */ = Int(0.1 /* seconds/chunk */
-//            * Double(SAMPLE_RATE) /* samples/second */
-//            * 2 /* bytes/sample */);
-//
-//        if (audioData.length > chunkSize) {
-//
-////            self.collectionView?.addSubview((self.loader))
-////            self.loader.anchor(top: nil, left: nil, bottom: self.searchButton.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 40, height: 40)
-////            self.loader.centerXAnchor.constraint(equalTo: (self.collectionView?.centerXAnchor)!).isActive = true
-////            self.loader.isHidden = false
-////            self.loader.startAnimating()
-//
-//            SpeechRecognitionService.sharedInstance.streamAudioData(audioData, completion: { [weak self] (response, error) in
-//
-//                guard let strongSelf = self else {
-//                    return
-//                }
-//
-//                if let error = error {
-//                    strongSelf.resultLabel.text = error.localizedDescription
-//                } else if let response = response {
-//                    var finished = false
-//                    print(response)
-//                    for result in response.resultsArray! {
-//                        if let result = result as? StreamingRecognitionResult {
-//                            if result.isFinal {
-//                                finished = true
-//
-////                                print("Terminó la búsqueda!")
-////                                self?.loader.isHidden = true
-////                                self?.loader.stopAnimating()
-////                                self?.searchButton.tintColor = .gray
-////                                _ = AudioController.sharedInstance.stop()
-////                                SpeechRecognitionService.sharedInstance.stopStreaming()
-//                            }
-//
-//                            for alternative in result.alternativesArray! {
-//                                if let transcript = alternative as? SpeechRecognitionAlternative {
-//                                    for word in transcript.wordsArray! {
-//                                        if let word = word as? WordInfo {
-//                                            strongSelf.resultLabel.text = word.word
-//                                            self?.wordForSearch(word: word.word)
-//
-//
-//                                        }
-//                                    }
-//
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    if finished {
-////                        strongSelf.stopAudio(strongSelf)
-//                    }
-//                }
-//            })
-//            self.audioData = NSMutableData()
-//        }
-//    }
+    func showCustomAlertMessage() {
+        
+        collectionView.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        
+        view.addSubview(customAlertMessage)
+        customAlertMessage.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        customAlertMessage.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        customAlertMessage.iconMessage.image = "💩".image()
+        customAlertMessage.labelMessage.text = "¡Hubo un problema!\n\n1. Excediste el tiempo de espera (1 min. máx.) ó\n2. Debes hablar un poco más fuerte y claro."
+        
+        alertTap = UITapGestureRecognizer(target: self, action: #selector(dismissAlertMessage))
+        view.addGestureRecognizer(alertTap)
+        alertTap.delegate = self
+    }
+    
+    func processSampleData(_ data: Data) -> Void {
+        
+        audioData.append(data)
+
+        // We recommend sending samples in 100ms chunks
+        let chunkSize : Int /* bytes/chunk */ = Int(0.1 /* seconds/chunk */
+            * Double(SAMPLE_RATE) /* samples/second */
+            * 2 /* bytes/sample */);
+        
+        if (audioData.length > chunkSize) {
+            SpeechRecognitionService.sharedInstance.streamAudioData(audioData, completion: { [weak self] (response, error) in
+                
+                guard let strongSelf = self else {
+                    return
+                }
+
+                if let error = error {
+                    
+                    print("OCURRIÓ UN ERROR: ", error)
+                    self?.loader.stopAnimating()
+                    
+                    self?.showCustomAlertMessage()
+                    
+                    self?.view.addSubview((self?.resetButton)!)
+                    self?.resetButton.anchor(top: nil, left: nil, bottom: self?.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 60, paddingRight: 0, width: 50, height: 50)
+                    self?.resetButton.centerXAnchor.constraint(equalTo: (self?.view.centerXAnchor)!).isActive = true
+                    
+                    self?.searchButton.isHidden = true
+                    
+                } else if let response = response {
+                    print("BUSCANDOOOOOO")
+                    self?.loader.startAnimating()
+                    
+                    var finished = false
+                    print(response)
+                    for result in response.resultsArray! {
+                        if let result = result as? StreamingRecognitionResult {
+                            if result.isFinal {
+                                finished = true
+                            }
+
+                            for alternative in result.alternativesArray! {
+                                if let transcript = alternative as? SpeechRecognitionAlternative {
+                                    for word in transcript.wordsArray! {
+                                        if let word = word as? WordInfo {
+                                            self?.wordForSearch(word: word.word)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if finished {
+                        strongSelf.stopAudio(strongSelf)
+                        
+                    }
+                }
+            })
+            self.audioData = NSMutableData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,7 +194,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         collectionView.backgroundColor = .white
         self.view.addSubview(collectionView)
         
-//        AudioController.sharedInstance.delegate = self
+        AudioController.sharedInstance.delegate = self
         
         // Reachability for checking internet connection
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityStatusChanged), name: NSNotification.Name(rawValue: "ReachStatusChanged"), object: nil)
@@ -208,11 +231,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         
 //        searchButton.adjustsImageWhenHighlighted = false
         
-        
-//        view.addSubview(resultLabel)
-//        resultLabel.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 45, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-//        resultLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log out", style: .plain, target: self, action: #selector(handleLogout))
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -224,43 +243,37 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
-//    func recordAudio(_ sender: NSObject) {
-////        messageLabel.isHidden = true
-////        searchButton.tintColor = .red
-//        let audioSession = AVAudioSession.sharedInstance()
-//        do {
-//            try audioSession.setCategory(AVAudioSessionCategoryRecord)
-//        } catch {
-////            print("Some error")
-//        }
-//        audioData = NSMutableData()
-//        _ = AudioController.sharedInstance.prepare(specifiedSampleRate: SAMPLE_RATE)
-//        SpeechRecognitionService.sharedInstance.sampleRate = SAMPLE_RATE
-//        _ = AudioController.sharedInstance.start()
-//
-//        //        view.addSubview(stopButton)
-//        //        stopButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 50)
-//        //        stopButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//    }
-//
-//    func stopAudio(_ sender: NSObject) {
-////        stopButton.isHidden = true
-//        _ = AudioController.sharedInstance.stop()
-//        SpeechRecognitionService.sharedInstance.stopStreaming()
-//    }
+    func recordAudio(_ sender: NSObject) {
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(AVAudioSessionCategoryRecord)
+        } catch {
+            
+        }
+        audioData = NSMutableData()
+        _ = AudioController.sharedInstance.prepare(specifiedSampleRate: SAMPLE_RATE)
+        SpeechRecognitionService.sharedInstance.sampleRate = SAMPLE_RATE
+        _ = AudioController.sharedInstance.start()
+
+    }
     
-//    func stopAudio() {
-//        _ = AudioController.sharedInstance.stop()
-//        SpeechRecognitionService.sharedInstance.stopStreaming()
-//    }
+    func stopAudio(_ sender: NSObject) {
+        _ = AudioController.sharedInstance.stop()
+        SpeechRecognitionService.sharedInstance.stopStreaming()
+    }
     
+    func resetAudio() {
+        _ = AudioController.sharedInstance.stop()
+        SpeechRecognitionService.sharedInstance.stopStreaming()
+        resetButton.isHidden = true
+        searchButton.isHidden = false
+    }
+
     func reachabilityStatusChanged() {
         print("Checking connectivity...")
     }
     
     func showUserStoriesView() {
-        
-//        stopAudio()
         let userStoriesController = UserStoriesController(collectionViewLayout: UICollectionViewFlowLayout())
         
         userStoriesController.userId = userSelected.id
@@ -274,33 +287,29 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func showUserReviewsView() {
-        
-//                stopAudio()
-                let userReviewsController = UserReviewsController(collectionViewLayout: UICollectionViewFlowLayout())
-        
-                userReviewsController.userId = userSelected.id
-                userReviewsController.userFullname = userSelected.fullname
-                userReviewsController.userImageUrl = userSelected.profileImageUrl
-                userReviewsController.currentUserDic = currentUserDic
-        
-                present(userReviewsController, animated: true) {
-                    self.viewGeneral.removeFromSuperview()
-                }
+        let userReviewsController = UserReviewsController(collectionViewLayout: UICollectionViewFlowLayout())
+
+        userReviewsController.userId = userSelected.id
+        userReviewsController.userFullname = userSelected.fullname
+        userReviewsController.userImageUrl = userSelected.profileImageUrl
+        userReviewsController.currentUserDic = currentUserDic
+
+        present(userReviewsController, animated: true) {
+            self.viewGeneral.removeFromSuperview()
+        }
     }
     
     func showWriteReviewView() {
-        
-//                stopAudio()
-                let writeReviewController = WriteReviewController()
-        
-                writeReviewController.userId = userSelected.id
-                writeReviewController.userFullname = userSelected.fullname
-                writeReviewController.userImageUrl = userSelected.profileImageUrl
-                writeReviewController.currentUserDic = currentUserDic
-        
-                present(writeReviewController, animated: true) {
-                    self.viewGeneral.removeFromSuperview()
-                }
+        let writeReviewController = WriteReviewController()
+
+        writeReviewController.userId = userSelected.id
+        writeReviewController.userFullname = userSelected.fullname
+        writeReviewController.userImageUrl = userSelected.profileImageUrl
+        writeReviewController.currentUserDic = currentUserDic
+
+        present(writeReviewController, animated: true) {
+            self.viewGeneral.removeFromSuperview()
+        }
     }
     
     func loadAllUsers(completion: @escaping (Bool) -> ()) {
@@ -357,10 +366,14 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                         
                         completion(true)
                         
-//                        self.view.addSubview(self.searchButton)
-//                        self.searchButton.anchor(top: nil, left: nil, bottom: self.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 30, paddingRight: 0, width: 50, height: 50)
-//                        self.searchButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-//                        self.searchButton.adjustsImageWhenHighlighted = false
+                        self.view.addSubview(self.searchButton)
+                        self.searchButton.anchor(top: nil, left: nil, bottom: self.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 30, paddingRight: 0, width: 50, height: 50)
+                        self.searchButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+                        self.searchButton.adjustsImageWhenHighlighted = false
+                        
+                        self.view.addSubview(self.stopButton)
+                        self.stopButton.anchor(top: nil, left: nil, bottom: self.searchButton.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 50, height: 50)
+                        self.stopButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
                         
                         self.loader.stopAnimating()
                         
@@ -511,8 +524,14 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         view.removeGestureRecognizer(tap)
     }
     
+    func dismissAlertMessage() {
+        customAlertMessage.removeFromSuperview()
+        collectionView.backgroundColor = .white
+        view.removeGestureRecognizer(alertTap)
+    }
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: viewContainer))!{
+        if (touch.view?.isDescendant(of: viewContainer))! || (touch.view?.isDescendant(of: customAlertMessage))! {
             return false
         }
         return true
@@ -558,4 +577,5 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
 }
+
 
