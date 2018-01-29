@@ -308,15 +308,21 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
             
-            let videoURL = URL(string: event.event_url)
-            self.player = AVPlayer(url: videoURL!)
-            self.playerLayer = AVPlayerLayer(player: self.player)
-            
-            self.playerLayer.frame = self.previewVideoContainerView.view.bounds
-            
-            self.previewVideoContainerView.view.layer.addSublayer(self.playerLayer)
-            
-            self.player.play()
+            do {
+                let videoURL = URL(string: event.event_url)
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.mixWithOthers)
+                self.player = AVPlayer(url: videoURL!)
+                
+                self.playerLayer = AVPlayerLayer(player: self.player)
+                
+                self.playerLayer.frame = self.previewVideoContainerView.view.bounds
+                
+                self.previewVideoContainerView.view.layer.addSublayer(self.playerLayer)
+                
+                self.player.play()
+            } catch {
+                print("Some error to reproduce video")
+            }
             
             self.playerLayer.zPosition = -5
             
