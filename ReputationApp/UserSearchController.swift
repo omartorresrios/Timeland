@@ -77,7 +77,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         super.viewDidLoad()
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         layout.itemSize = CGSize(width: 90, height: 120)
         
         collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
@@ -438,10 +438,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     func reachabilityStatusChanged() {
         print("Checking connectivity...")
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

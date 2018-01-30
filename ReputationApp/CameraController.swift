@@ -43,44 +43,52 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     var finalDuration: String?
     var videoUrl: URL?
     var player = AVPlayer()
+    var playerLayer = AVPlayerLayer()
     
     func showSuccesMessage() {
         DispatchQueue.main.async {
             
             self.loader.stopAnimating()
             
-            self.sendSuccesView.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            self.sendSuccesView.layer.transform = CATransform3DMakeScale(0, 0, 0)
+            
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+                self.view.addSubview(self.sendSuccesView)
+                self.sendSuccesView.layer.transform = CATransform3DMakeScale(1, 1, 1)
                 
-                self.blurView.addSubview(self.sendSuccesView)
                 self.sendSuccesView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
-                self.sendSuccesView.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
-                self.sendSuccesView.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
+                self.sendSuccesView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+                self.sendSuccesView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
                 
                 self.sendSuccesView.addSubview(self.sendSuccesIconImageView)
                 self.sendSuccesIconImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
                 self.sendSuccesIconImageView.centerXAnchor.constraint(equalTo: self.sendSuccesView.centerXAnchor).isActive = true
                 self.sendSuccesIconImageView.centerYAnchor.constraint(equalTo: self.sendSuccesView.centerYAnchor).isActive = true
                 
-                self.sendSuccesView.transform = .identity
+            }, completion: { (completed) in
                 
-            }, completion: { (finished) in
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                    self.sendSuccesView.removeFromSuperview()
-                    self.blurView.removeFromSuperview()
-                    let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDel.logUser(forAppDelegate: false)
+                UIView.animate(withDuration: 0.5, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
                     
-                })
-                
+                    self.sendSuccesView.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
+                    self.sendSuccesView.alpha = 0
+                    
+                }, completion: { (_) in
+                    
+                    DispatchQueue.main.async {
+                        self.sendSuccesView.removeFromSuperview()
+                        self.player.pause()
+                        let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                        appDel.logUser(forAppDelegate: false)
+                    }
+                })  
             })
-            
         }
     }
     
     func handleSend() {
         DispatchQueue.main.async {
+            self.cancelButton.removeFromSuperview()
+            self.saveButton.removeFromSuperview()
             self.sendView.removeFromSuperview()
             self.view.addSubview(self.loader)
             self.loader.center = self.view.center
@@ -146,7 +154,9 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let swiftyCamButton: SwiftyCamButton = {
         let button = SwiftyCamButton()
-        button.backgroundColor = .white
+        button.backgroundColor = .clear
+        button.layer.borderWidth = 5
+        button.layer.borderColor = UIColor.white.cgColor
         button.layer.cornerRadius = 40
         button.isUserInteractionEnabled = false
         return button
@@ -280,20 +290,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         }
     }
     
-    let blurView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.8)
-        view.isUserInteractionEnabled = true
-        return view
-    }()
-    
-    let sendView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .green
-        view.layer.cornerRadius = 25
-        return view
-    }()
-    
     let sendSuccesView: UIView = {
         let view = UIView()
         view.backgroundColor = .green
@@ -301,10 +297,11 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return view
     }()
     
-    let sendButtomImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "hand")
-        return iv
+    let sendView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 45 / 2
+        view.backgroundColor = .green
+        return view
     }()
     
     let sendSuccesIconImageView: UIImageView = {
@@ -313,28 +310,68 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return iv
     }()
     
-    func setupBlurView() {
-        view.addSubview(blurView)
-        blurView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+    let cancelButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
+        return button
+    }()
+    
+    let saveButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "download").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
+        return button
+    }()
+    
+    let sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "send-1").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+        return button
+    }()
+    
+    func handleSave() {
+        DataService.instance.saveVideo(url: self.videoUrl!, view: self.view)
     }
     
-    func setupSendButton() {
+    func handleCancel() {
+        playerLayer.removeFromSuperlayer()
+        player.pause()
+        cancelButton.removeFromSuperview()
+        saveButton.removeFromSuperview()
+        sendView.removeFromSuperview()
+        swiftyCamButton.transform = .identity
         
-        blurView.addSubview(sendView)
-        sendView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
-        sendView.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
-        sendView.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+        DispatchQueue.main.async {
+            self.swiftyCamButton.delegate = self
+            self.swiftyButton()
+        }
+        
+    }
+    
+    func setupViews() {
+        view.addSubview(cancelButton)
+        cancelButton.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 15, height: 15)
+        
+        view.addSubview(saveButton)
+        saveButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 20, paddingRight: 0, width: 25, height: 25)
+        
+        view.addSubview(sendView)
+        sendView.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 12, paddingRight: 12, width: 45, height: 45)
         sendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
         
-        sendView.addSubview(sendButtomImageView)
-        sendButtomImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
-        sendButtomImageView.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
-        sendButtomImageView.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
-        sendButtomImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
+        sendView.addSubview(sendButton)
+        sendButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 23, height: 23)
+        sendButton.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
+        sendButton.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
+        
     }
     
-    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
-        
+    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL, secondaryUrl: URL) {
         videoUrl = url
         
         print("this is the url: ", url)
@@ -342,13 +379,22 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         DispatchQueue.main.async {
             self.circleView.removeFromSuperview()
             self.swiftyCamButton.removeFromSuperview()
-            
-            self.setupBlurView()
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.setupSendButton()
-        }
+        player = AVPlayer(url: secondaryUrl)
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer.frame = view.bounds
+        view.layer.addSublayer(playerLayer)
+        player.play()
+        
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: nil, using: { (_) in
+            DispatchQueue.main.async {
+                self.player.seek(to: kCMTimeZero)
+                self.player.play()
+            }
+        })
+        
+        setupViews()
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFocusAtPoint point: CGPoint) {

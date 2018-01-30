@@ -310,6 +310,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             
             do {
                 let videoURL = URL(string: event.event_url)
+                
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.mixWithOthers)
                 self.player = AVPlayer(url: videoURL!)
                 

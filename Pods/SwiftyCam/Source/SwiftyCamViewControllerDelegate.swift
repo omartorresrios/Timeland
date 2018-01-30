@@ -56,7 +56,7 @@ public protocol SwiftyCamViewControllerDelegate: class {
      - Parameter url: URL location of video in temporary directory
      */
     
-    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL)
+    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL, secondaryUrl: URL)
     
     /**
      SwiftyCamViewControllerDelegate function called when SwiftyCamViewController switches between front or rear camera.
@@ -104,7 +104,7 @@ public extension SwiftyCamViewControllerDelegate {
     }
 
     
-    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
+    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL, secondaryUrl: URL) {
         // Optional
     }
 

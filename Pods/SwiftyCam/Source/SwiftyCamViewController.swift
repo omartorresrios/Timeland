@@ -1109,7 +1109,7 @@ extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
 		} else {
 			//Call delegate function with the URL of the outputfile
 			DispatchQueue.main.async {
-				self.cameraDelegate?.swiftyCam(self, didFinishProcessVideoAt: compressedURL)
+				self.cameraDelegate?.swiftyCam(self, didFinishProcessVideoAt: compressedURL, secondaryUrl: outputFileURL)
 			}
 		}
 	}
