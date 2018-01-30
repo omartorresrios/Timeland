@@ -23,6 +23,13 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return tv
     }()
     
+    let loader: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+        indicator.alpha = 1.0
+        indicator.startAnimating()
+        return indicator
+    }()
+    
     let sendLabel = UILabel()
     
     var circleView = CircleView()
@@ -37,7 +44,47 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     var videoUrl: URL?
     var player = AVPlayer()
     
+    func showSuccesMessage() {
+        DispatchQueue.main.async {
+            
+            self.loader.stopAnimating()
+            
+            self.sendSuccesView.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                
+                self.blurView.addSubview(self.sendSuccesView)
+                self.sendSuccesView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
+                self.sendSuccesView.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
+                self.sendSuccesView.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
+                
+                self.sendSuccesView.addSubview(self.sendSuccesIconImageView)
+                self.sendSuccesIconImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
+                self.sendSuccesIconImageView.centerXAnchor.constraint(equalTo: self.sendSuccesView.centerXAnchor).isActive = true
+                self.sendSuccesIconImageView.centerYAnchor.constraint(equalTo: self.sendSuccesView.centerYAnchor).isActive = true
+                
+                self.sendSuccesView.transform = .identity
+                
+            }, completion: { (finished) in
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                    self.sendSuccesView.removeFromSuperview()
+                    self.blurView.removeFromSuperview()
+                    let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                    appDel.logUser(forAppDelegate: false)
+                    
+                })
+                
+            })
+            
+        }
+    }
+    
     func handleSend() {
+        DispatchQueue.main.async {
+            self.sendView.removeFromSuperview()
+            self.view.addSubview(self.loader)
+            self.loader.center = self.view.center
+        }
         
         print("this is the final url: ", videoUrl!)
         // Retreieve Auth_Token from Keychain
@@ -48,11 +95,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             
             DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!, completion: { (success) in
                 if success {
-                    self.blurView.removeFromSuperview()
-                    self.sendButtomImageView.removeFromSuperview()
-                    let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDel.logUser(forAppDelegate: false)
-
+                    self.showSuccesMessage()
                 }
             })
             
@@ -251,9 +294,22 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return view
     }()
     
+    let sendSuccesView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.layer.cornerRadius = 25
+        return view
+    }()
+    
     let sendButtomImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = #imageLiteral(resourceName: "hand")
+        return iv
+    }()
+    
+    let sendSuccesIconImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "clapping_hand")
         return iv
     }()
     
