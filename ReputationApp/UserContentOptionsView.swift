@@ -90,12 +90,8 @@ class UserContentOptionsView: UIView {
         storiesLabel.centerYAnchor.constraint(equalTo: storiesEmojiView.centerYAnchor).isActive = true
         
         
-        
         viewContainer.addSubview(reviewsViewContainer)
         reviewsViewContainer.anchor(top: storiesViewContainer.bottomAnchor, left: viewContainer.leftAnchor, bottom: nil, right: viewContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150 / 3)
-        reviewsViewContainer.layoutIfNeeded()
-        reviewsViewContainer.layer.addBorder(edge: .top, color: .gray, thickness: 1)
-        
         
         let reviewsEmojiView = UIImageView()
         let reviewsEmoji = "👏".image()
@@ -113,9 +109,6 @@ class UserContentOptionsView: UIView {
         
         viewContainer.addSubview(writeReviewViewContainer)
         writeReviewViewContainer.anchor(top: reviewsViewContainer.bottomAnchor, left: viewContainer.leftAnchor, bottom: nil, right: viewContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150 / 3)
-        writeReviewViewContainer.layoutIfNeeded()
-        writeReviewViewContainer.layer.addBorder(edge: .top, color: .gray, thickness: 1)
-        
         
         let writeEmojiView = UIImageView()
         let writeEmoji = "🗣".image()
@@ -128,8 +121,6 @@ class UserContentOptionsView: UIView {
         
         writeLabel.anchor(top: nil, left: writeEmojiView.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         writeLabel.centerYAnchor.constraint(equalTo: writeEmojiView.centerYAnchor).isActive = true
-        
-        
         
     }
     

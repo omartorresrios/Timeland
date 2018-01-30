@@ -396,6 +396,12 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
             
             let reviewsTap = UITapGestureRecognizer(target: self, action: #selector(self.showUserReviewsView))
             self.userContentOptionsView.reviewsViewContainer.addGestureRecognizer(reviewsTap)
+            
+            self.userContentOptionsView.reviewsViewContainer.layoutIfNeeded()
+            self.userContentOptionsView.reviewsViewContainer.layer.addBorder(edge: .top, color: .gray, thickness: 1)
+            
+            self.userContentOptionsView.writeReviewViewContainer.layoutIfNeeded()
+            self.userContentOptionsView.writeReviewViewContainer.layer.addBorder(edge: .top, color: .gray, thickness: 1)
 
             let writeTap = UITapGestureRecognizer(target: self, action: #selector(self.showWriteReviewView))
             self.userContentOptionsView.writeReviewViewContainer.addGestureRecognizer(writeTap)

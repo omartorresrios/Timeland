@@ -37,7 +37,7 @@ class UserSearchCell: UICollectionViewCell {
     let fullnameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .center
         return label
     }()
