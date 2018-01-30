@@ -12,6 +12,7 @@
 		A025EDBE201FAFEE00594000 /* CustomAlertMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */; };
 		A02B3792200BC8990062CF4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A02B3791200BC8990062CF4F /* GoogleService-Info.plist */; };
 		A02B3794200C45A80062CF4F /* MyProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02B3793200C45A80062CF4F /* MyProfileCell.swift */; };
+		A030BAA42020CA3900D9BD73 /* UserContentOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A030BAA32020CA3900D9BD73 /* UserContentOptionsView.swift */; };
 		A035D7E21FF925800063706B /* UserReviewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E11FF925800063706B /* UserReviewsCell.swift */; };
 		A035D7E41FF9259C0063706B /* PreviewAudioContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */; };
 		A035D7E61FF927D50063706B /* User1.swift in Sources */ = {isa = PBXBuildFile; fileRef = A035D7E51FF927D50063706B /* User1.swift */; };
@@ -87,6 +88,7 @@
 		A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Signin-Bridging-Header.h"; sourceTree = "<group>"; };
 		A02B3791200BC8990062CF4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A02B3793200C45A80062CF4F /* MyProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileCell.swift; sourceTree = "<group>"; };
+		A030BAA32020CA3900D9BD73 /* UserContentOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContentOptionsView.swift; sourceTree = "<group>"; };
 		A035D7E11FF925800063706B /* UserReviewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserReviewsCell.swift; sourceTree = "<group>"; };
 		A035D7E31FF9259C0063706B /* PreviewAudioContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewAudioContainerView.swift; sourceTree = "<group>"; };
 		A035D7E51FF927D50063706B /* User1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User1.swift; sourceTree = "<group>"; };
@@ -428,6 +430,7 @@
 				A07B3BC51ED7810E00F10657 /* Constants.swift */,
 				A02B378F200BC1CC0062CF4F /* Signin-Bridging-Header.h */,
 				A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */,
+				A030BAA32020CA3900D9BD73 /* UserContentOptionsView.swift */,
 			);
 			name = "Supporting files";
 			sourceTree = "<group>";
@@ -628,6 +631,7 @@
 				A07B958E1F2E84CE008E9EA0 /* Reachability.swift in Sources */,
 				A0F872AB1FF98EB700EAF27A /* SpeechRecognitionService.swift in Sources */,
 				A0EF9F551F9076CA00B53FA2 /* CircleView.swift in Sources */,
+				A030BAA42020CA3900D9BD73 /* UserContentOptionsView.swift in Sources */,
 				A0EC6BF81FA11F52005384D7 /* VideoLibraryContentCell.swift in Sources */,
 				A0DD9D751FE189450080FA91 /* CacheManager.swift in Sources */,
 				A07B3C3B1ED91EDB00F10657 /* SignUpController.swift in Sources */,
