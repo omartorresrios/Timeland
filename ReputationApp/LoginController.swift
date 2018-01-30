@@ -109,16 +109,26 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     }
     
     func showCustomAlertMessage() {
-        self.view.addSubview(customAlertMessage)
-        customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-        customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        
-        customAlertMessage.iconMessage.image = "✋".image()
-        customAlertMessage.labelMessage.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
-        
-        self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
-        self.view.addGestureRecognizer(self.tap)
-        self.tap.delegate = self
+        DispatchQueue.main.async {
+            
+            self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+            
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                self.view.addSubview(self.customAlertMessage)
+                self.customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                self.customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                
+                self.customAlertMessage.iconMessage.image = "✋".image()
+                self.customAlertMessage.labelMessage.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
+                
+                self.customAlertMessage.transform = .identity
+                
+                self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+                self.view.addGestureRecognizer(self.tap)
+                self.tap.delegate = self
+                
+            }, completion: nil)
+        }
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {

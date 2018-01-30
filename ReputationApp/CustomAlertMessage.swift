@@ -35,34 +35,25 @@ class CustomAlertMessage: UIView {
     }()
     
     func setupViews() {
-        DispatchQueue.main.async {
-            
-            self.viewMessage.transform = CGAffineTransform(translationX: 0, y: self.frame.height)
-            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                self.addSubview(self.viewMessage)
-                
-                self.viewMessage.anchor(top: nil, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-                self.viewMessage.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-                
-                
-                self.viewMessage.addSubview(self.iconMessage)
-                self.iconMessage.anchor(top: self.viewMessage.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-                self.iconMessage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-                
-                self.viewMessage.addSubview(self.labelMessage)
-                self.labelMessage.anchor(top: self.iconMessage.bottomAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
-                
-                self.viewMessage.transform = .identity
-            }, completion: nil)
-        }
+        
+        self.addSubview(self.viewMessage)
+        
+        self.viewMessage.anchor(top: nil, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        self.viewMessage.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        
+        
+        self.viewMessage.addSubview(self.iconMessage)
+        self.iconMessage.anchor(top: self.viewMessage.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        self.iconMessage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        
+        self.viewMessage.addSubview(self.labelMessage)
+        self.labelMessage.anchor(top: self.iconMessage.bottomAnchor, left: self.viewMessage.leftAnchor, bottom: self.viewMessage.bottomAnchor, right: self.viewMessage.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+        
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        
         setupViews()
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

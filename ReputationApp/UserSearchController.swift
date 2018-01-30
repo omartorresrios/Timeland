@@ -35,13 +35,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         return indicator
     }()
     
-    let processSpeechLoader: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
-        indicator.alpha = 1.0
-        indicator.startAnimating()
-        return indicator
-    }()
-    
     let messageLabel: UILabel = {
         let ml = UILabel()
         ml.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
@@ -73,12 +66,10 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         return button
     }()
     
-    let resetButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("busca otra", for: .normal)
-        button.backgroundColor = .black
-        button.addTarget(self, action: #selector(resetAudio), for: .touchUpInside)
-        return button
+    let supportAlertView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        return view
     }()
     
     func wordForSearch(word: String) {
@@ -95,6 +86,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         } else {
             messageLabel.isHidden = true
             loader.stopAnimating()
+            collectionView.isHidden = false
         }
 
         collectionView?.reloadData()
@@ -103,18 +95,34 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     func showCustomAlertMessage() {
         
-        collectionView.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        DispatchQueue.main.async {
+            
+            self.loader.stopAnimating()
+            self.searchButton.isHidden = true
+            
+            self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+            
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                
+                self.view.addSubview(self.supportAlertView)
+                self.supportAlertView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                
+                self.supportAlertView.addSubview(self.customAlertMessage)
+                self.customAlertMessage.anchor(top: nil, left: self.supportAlertView.leftAnchor, bottom: nil, right: self.supportAlertView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                self.customAlertMessage.centerYAnchor.constraint(equalTo: self.supportAlertView.centerYAnchor).isActive = true
+                
+                self.customAlertMessage.iconMessage.image = "💩".image()
+                self.customAlertMessage.labelMessage.text = "¡Hubo un problema!\n\n1. Se excedió el tiempo de espera (1 min. máx.) ó\n2. Tu tono de voz fue muy bajo."
+                
+                self.customAlertMessage.transform = .identity
+                
+                self.alertTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissAlertMessage))
+                self.supportAlertView.addGestureRecognizer(self.alertTap)
+                self.alertTap.delegate = self
+                
+            }, completion: nil)
+        }
         
-        view.addSubview(customAlertMessage)
-        customAlertMessage.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-        customAlertMessage.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        customAlertMessage.iconMessage.image = "💩".image()
-        customAlertMessage.labelMessage.text = "¡Hubo un problema!\n\n1. Excediste el tiempo de espera (1 min. máx.) ó\n2. Debes hablar un poco más fuerte y claro."
-        
-        alertTap = UITapGestureRecognizer(target: self, action: #selector(dismissAlertMessage))
-        view.addGestureRecognizer(alertTap)
-        alertTap.delegate = self
     }
     
     func processSampleData(_ data: Data) -> Void {
@@ -140,15 +148,13 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                     
                     self?.showCustomAlertMessage()
                     
-                    self?.view.addSubview((self?.resetButton)!)
-                    self?.resetButton.anchor(top: nil, left: nil, bottom: self?.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 60, paddingRight: 0, width: 50, height: 50)
-                    self?.resetButton.centerXAnchor.constraint(equalTo: (self?.view.centerXAnchor)!).isActive = true
-                    
                     self?.searchButton.isHidden = true
                     
                 } else if let response = response {
-                    print("BUSCANDOOOOOO")
+                    
                     self?.loader.startAnimating()
+                    self?.loader.isHidden = false
+                    self?.searchButton.tintColor = .gray
                     
                     var finished = false
                     print(response)
@@ -203,18 +209,13 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .onDrag
         
-        
+        collectionView.isHidden = true
         //        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
         layout.sectionHeadersPinToVisibleBounds = true
         
-        
-        
         // Initialize the loader and position it
-        collectionView.addSubview(loader)
-        //        let indicatorYStartPosition = (navigationController?.navigationBar.frame.size.height)! + 10
-        loader.center = CGPoint(x: UIScreen.main.bounds.size.width / 2, y: 40)
-        
-      
+        view.addSubview(loader)
+        loader.center = view.center
         
         // Position the messageLabel
         view.addSubview(messageLabel)
@@ -244,6 +245,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func recordAudio(_ sender: NSObject) {
+        messageLabel.isHidden = true
+        searchButton.tintColor = .yellow
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(AVAudioSessionCategoryRecord)
@@ -265,7 +268,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     func resetAudio() {
         _ = AudioController.sharedInstance.stop()
         SpeechRecognitionService.sharedInstance.stopStreaming()
-        resetButton.isHidden = true
         searchButton.isHidden = false
     }
 
@@ -525,9 +527,11 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func dismissAlertMessage() {
-        customAlertMessage.removeFromSuperview()
+        supportAlertView.removeFromSuperview()
+        resetAudio()
+        searchButton.tintColor = .gray
         collectionView.backgroundColor = .white
-        view.removeGestureRecognizer(alertTap)
+        supportAlertView.removeGestureRecognizer(alertTap)
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
