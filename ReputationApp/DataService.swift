@@ -17,6 +17,8 @@ class DataService {
     func savePhoto(image: UIImage, view: UIView) {
         let library = PHPhotoLibrary.shared()
         
+        
+        
         library.performChanges({
             PHAssetChangeRequest.creationRequestForAsset(from: image)
         }) { (success, err) in
@@ -64,6 +66,21 @@ class DataService {
     }
     
     func saveVideo(url: URL, view: UIView) {
+        let blurView = UIView()
+        blurView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        view.addSubview(blurView)
+        blurView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        let loader = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        loader.alpha = 1.0
+        loader.startAnimating()
+        
+        blurView.addSubview(loader)
+        loader.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        loader.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+        loader.centerXAnchor.constraint(equalTo: blurView.centerXAnchor).isActive = true
+        
+        
         PHPhotoLibrary.shared().performChanges({
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
         }) { (success, err) in
@@ -72,19 +89,20 @@ class DataService {
             }
             print("Successfully saved video to library")
             
+            
             DispatchQueue.main.async {
+                loader.stopAnimating()
                 let savedLabel = UILabel()
-                savedLabel.text = "Se guardó!"
-                savedLabel.font = UIFont.boldSystemFont(ofSize: 18)
+                blurView.addSubview(savedLabel)
+                savedLabel.anchor(top: nil, left: blurView.leftAnchor, bottom: nil, right: blurView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 0, paddingRight: 50, width: 0, height: 60)
+                savedLabel.centerYAnchor.constraint(equalTo: blurView.centerYAnchor).isActive = true
+                savedLabel.text = "¡Guardado! 👌"
+                savedLabel.font = UIFont(name: "SFUIDisplay-Medium", size: 18)
                 savedLabel.textColor = .white
+                savedLabel.translatesAutoresizingMaskIntoConstraints = false
                 savedLabel.numberOfLines = 0
-                savedLabel.backgroundColor = UIColor(white: 0, alpha: 0.3)
                 savedLabel.textAlignment = .center
                 
-                savedLabel.frame = CGRect(x: 0, y: 0, width: 150, height: 80)
-                savedLabel.center = view.center
-                
-                view.addSubview(savedLabel)
                 
                 savedLabel.layer.transform = CATransform3DMakeScale(0, 0, 0)
                 
@@ -102,6 +120,7 @@ class DataService {
                     }, completion: { (_) in
                         
                         savedLabel.removeFromSuperview()
+                        blurView.removeFromSuperview()
                         
                     })
                     

@@ -312,6 +312,9 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let cancelButton: UIButton = {
         let button = UIButton(type: .system)
+        button.layer.shadowOffset = CGSize(width: 0, height: 0)
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 6
         button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = UIColor.white
         button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
@@ -320,6 +323,9 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
+        button.layer.shadowOffset = CGSize(width: 0, height: 0)
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 6
         button.setImage(#imageLiteral(resourceName: "download").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = UIColor.white
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
