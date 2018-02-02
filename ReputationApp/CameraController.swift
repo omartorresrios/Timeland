@@ -17,6 +17,21 @@ import GoogleSignIn
 
 class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate, AVCapturePhotoCaptureDelegate {
     
+    let sendLabel = UILabel()
+    
+    var circleView = CircleView()
+    let videoFileOutput = AVCaptureMovieFileOutput()
+    let captureSession = AVCaptureSession()
+    
+    var timerTest: Timer?
+    var counter = 20
+    var startTime: Double = 0
+    var time: Double = 0
+    var finalDuration: String?
+    var videoUrl: URL?
+    var player = AVPlayer()
+    var playerLayer = AVPlayerLayer()
+    
     let videoCaption: UITextView = {
         let tv = UITextView()
         tv.layer.cornerRadius = 4
@@ -36,20 +51,99 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return view
     }()
     
-    let sendLabel = UILabel()
+    let fakeView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        return view
+    }()
     
-    var circleView = CircleView()
-    let videoFileOutput = AVCaptureMovieFileOutput()
-    let captureSession = AVCaptureSession()
+    let fakeButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .clear
+        button.layer.borderWidth = 5
+        button.layer.borderColor = UIColor.gray.cgColor
+        button.layer.cornerRadius = 75 / 2
+        button.isUserInteractionEnabled = false
+        return button
+    }()
     
-    var timerTest: Timer?
-    var counter = 20
-    var startTime: Double = 0
-    var time: Double = 0
-    var finalDuration: String?
-    var videoUrl: URL?
-    var player = AVPlayer()
-    var playerLayer = AVPlayerLayer()
+    let swiftyCamButton: SwiftyCamButton = {
+        let button = SwiftyCamButton()
+        button.backgroundColor = .clear
+        button.layer.borderWidth = 5
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.cornerRadius = 75 / 2
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+    
+    let sendSuccesView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.layer.cornerRadius = 25
+        return view
+    }()
+    
+    let sendView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 45 / 2
+        view.backgroundColor = .green
+        return view
+    }()
+    
+    let sendSuccesIconImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "clapping_hand")
+        return iv
+    }()
+    
+    let cancelButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.layer.shadowOffset = CGSize(width: 0, height: 0)
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 6
+        button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
+        return button
+    }()
+    
+    let saveButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.layer.shadowOffset = CGSize(width: 0, height: 0)
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 6
+        button.setImage(#imageLiteral(resourceName: "download").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
+        return button
+    }()
+    
+    let sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "send-1").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+        return button
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        cameraDelegate = self
+        defaultCamera = .front
+        maximumVideoDuration = 20.0
+        shouldUseDeviceOrientation = false
+        allowAutoRotate = false
+        audioEnabled = true
+        
+        fakeViews()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+    }
     
     func showSuccesMessage() {
         DispatchQueue.main.async {
@@ -152,32 +246,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         
     }
     
-    let fakeView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
-    
-    let fakeButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .clear
-        button.layer.borderWidth = 5
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.cornerRadius = 75 / 2
-        button.isUserInteractionEnabled = false
-        return button
-    }()
-    
-    let swiftyCamButton: SwiftyCamButton = {
-        let button = SwiftyCamButton()
-        button.backgroundColor = .clear
-        button.layer.borderWidth = 5
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.cornerRadius = 75 / 2
-        button.isUserInteractionEnabled = false
-        return button
-    }()
-    
     func swiftyButton() {
         
         view.addSubview(swiftyCamButton)
@@ -194,19 +262,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        cameraDelegate = self
-        defaultCamera = .front
-        maximumVideoDuration = 20.0
-        shouldUseDeviceOrientation = false
-        allowAutoRotate = false
-        audioEnabled = true
-        
-        fakeViews()
-    }
-    
     func fakeViews() {
         view.addSubview(fakeView)
         fakeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
@@ -214,11 +269,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         view.addSubview(fakeButton)
         fakeButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 75, height: 75)
         fakeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
     }
     
     func SetupSwiftyCamButton() {
@@ -265,21 +315,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         try! Locksmith.deleteDataForUserAccount(userAccount: "currentUserAvatar")
     }
     
-    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
-        print("recording video")
-        
-        startTime = Date().timeIntervalSinceReferenceDate
-        timerTest = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(update), userInfo: nil, repeats: true)
-        
-        DispatchQueue.main.async {
-            self.swiftyCamButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-            UIView.animate(withDuration: 0.4) {
-                self.swiftyCamButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-                self.addCircleView()
-            }
-        }
-    }
-    
     func update() {
         DispatchQueue.main.async {
             if self.counter > 0 {
@@ -292,87 +327,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             
             self.finalDuration = timeString
         }
-    }
-    
-    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
-        print("finishing recording video")
-        
-        DispatchQueue.main.async {
-            // Cancel the timer
-            self.timerTest?.invalidate()
-            self.timerTest = nil
-            self.circleView.pauseAnimation()
-            print("video quality was: ", self.videoQuality)
-        }
-    }
-    
-    let sendSuccesView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .green
-        view.layer.cornerRadius = 25
-        return view
-    }()
-    
-    let sendView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 45 / 2
-        view.backgroundColor = .green
-        return view
-    }()
-    
-    let sendSuccesIconImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.image = #imageLiteral(resourceName: "clapping_hand")
-        return iv
-    }()
-    
-    let cancelButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.layer.shadowOffset = CGSize(width: 0, height: 0)
-        button.layer.shadowOpacity = 1
-        button.layer.shadowRadius = 6
-        button.setImage(#imageLiteral(resourceName: "close").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.white
-        button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
-        return button
-    }()
-    
-    let saveButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.layer.shadowOffset = CGSize(width: 0, height: 0)
-        button.layer.shadowOpacity = 1
-        button.layer.shadowRadius = 6
-        button.setImage(#imageLiteral(resourceName: "download").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.white
-        button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
-        return button
-    }()
-    
-    let sendButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "send-1").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.white
-        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        return button
-    }()
-    
-    func handleSave() {
-        DataService.instance.saveVideo(url: self.videoUrl!, view: self.view)
-    }
-    
-    func handleCancel() {
-        playerLayer.removeFromSuperlayer()
-        player.pause()
-        cancelButton.removeFromSuperview()
-        saveButton.removeFromSuperview()
-        sendView.removeFromSuperview()
-        swiftyCamButton.transform = .identity
-        
-        DispatchQueue.main.async {
-            self.swiftyCamButton.delegate = self
-            self.swiftyButton()
-        }
-        
     }
     
     func setupViews() {
@@ -390,6 +344,52 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         sendButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 23, height: 23)
         sendButton.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
         sendButton.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
+        
+    }
+    
+    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
+        print("recording video")
+        
+        startTime = Date().timeIntervalSinceReferenceDate
+        timerTest = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        
+        DispatchQueue.main.async {
+            self.swiftyCamButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            UIView.animate(withDuration: 0.4) {
+                self.swiftyCamButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+                self.addCircleView()
+            }
+        }
+    }
+    
+    func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
+        print("finishing recording video")
+        
+        DispatchQueue.main.async {
+            // Cancel the timer
+            self.timerTest?.invalidate()
+            self.timerTest = nil
+            self.circleView.pauseAnimation()
+            print("video quality was: ", self.videoQuality)
+        }
+    }
+    
+    func handleSave() {
+        DataService.instance.saveVideo(url: self.videoUrl!, view: self.view)
+    }
+    
+    func handleCancel() {
+        playerLayer.removeFromSuperlayer()
+        player.pause()
+        cancelButton.removeFromSuperview()
+        saveButton.removeFromSuperview()
+        sendView.removeFromSuperview()
+        swiftyCamButton.transform = .identity
+        
+        DispatchQueue.main.async {
+            self.swiftyCamButton.delegate = self
+            self.swiftyButton()
+        }
         
     }
     
