@@ -172,4 +172,45 @@ class DataService {
         })
     }
     
+    func shareAudio(authToken: String, userId: Int, audioUrl: URL, duration: TimeInterval, completion: @escaping (Bool) -> ()) {
+        // Set Authorization header
+        let header = ["Authorization": "Token token=\(authToken)"]
+        
+        let parameters = ["duration": duration] as [String : Any]
+        
+        let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/\(userId)/speak")!
+        
+        Alamofire.upload(multipartFormData: { multipartFormData in
+            
+            multipartFormData.append(audioUrl, withName: "audio", fileName: ".m4a", mimeType: "audio/m4a")
+            
+            for (key, value) in parameters {
+                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+            }
+            
+        }, usingThreshold: UInt64.init() , to: url, method: .post, headers: header, encodingCompletion: { encodingResult in
+            
+            switch encodingResult {
+            case .success(let upload, _, _):
+                
+                upload.responseJSON { response in
+                    print("request: \(response.request!)") // original URL request
+                    print("response: \(response.response!)") // URL response
+                    print("response data: \(response.data!)") // server data
+                    print("result: \(response.result)") // result of response serialization
+                    
+                    if let JSON = response.result.value {
+                        print("JSON: \(JSON)")
+                        print("send audio successfully")
+                        completion(true)
+                    }
+                }
+                
+            case .failure(let encodingError):
+                print("Alamofire proccess failed", encodingError)
+                completion(false)
+            }
+        })
+    }
+    
 }

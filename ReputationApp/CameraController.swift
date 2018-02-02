@@ -36,7 +36,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return view
     }()
     
-    
     let sendLabel = UILabel()
     
     var circleView = CircleView()
