@@ -135,9 +135,9 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     func addCircleView() {
         
-        let diceRoll = view.frame.size.width / 2 - (80 / 2)
-        let y = view.frame.size.height - 100
-        let circleWidth = CGFloat(80)
+        let diceRoll = view.frame.size.width / 2 - (75 / 2)
+        let y = view.frame.size.height - 95
+        let circleWidth = CGFloat(75)
         let circleHeight = circleWidth
         circleView = CircleView(frame: CGRect(x: diceRoll, y: y, width: circleWidth, height: circleHeight))
         
@@ -160,9 +160,11 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let fakeButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .gray
+        button.backgroundColor = .clear
+        button.layer.borderWidth = 5
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.cornerRadius = 75 / 2
         button.isUserInteractionEnabled = false
-        button.layer.cornerRadius = 40
         return button
     }()
     
@@ -171,7 +173,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         button.backgroundColor = .clear
         button.layer.borderWidth = 5
         button.layer.borderColor = UIColor.white.cgColor
-        button.layer.cornerRadius = 40
+        button.layer.cornerRadius = 75 / 2
         button.isUserInteractionEnabled = false
         return button
     }()
@@ -179,7 +181,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     func swiftyButton() {
         
         view.addSubview(swiftyCamButton)
-        swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
+        swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 75, height: 75)
         swiftyCamButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         let button = UIButton()
@@ -210,7 +212,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         fakeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         view.addSubview(fakeButton)
-        fakeButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 80, height: 80)
+        fakeButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 75, height: 75)
         fakeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
