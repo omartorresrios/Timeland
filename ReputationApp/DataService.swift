@@ -30,7 +30,7 @@ class DataService {
             DispatchQueue.main.async {
                 let savedLabel = UILabel()
                 savedLabel.text = "Se guardó!"
-                savedLabel.font = UIFont.boldSystemFont(ofSize: 18)
+                savedLabel.font = UIFont(name: "SFUIDisplay-Medium", size: 18)
                 savedLabel.textColor = .white
                 savedLabel.numberOfLines = 0
                 savedLabel.backgroundColor = UIColor(white: 0, alpha: 0.3)

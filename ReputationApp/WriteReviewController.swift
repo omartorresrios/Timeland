@@ -58,7 +58,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     
     let blurView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        view.backgroundColor = UIColor(white: 0, alpha: 0.8)
         return view
     }()
     
@@ -107,9 +107,8 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0:00"
-        label.textColor = .black
         label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
-        label.font = UIFont(name: "SFUIDisplay-Semibold", size: 14)
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .right
         return label
     }()
@@ -216,9 +215,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
                 self.progressView.removeFromSuperview()
                 self.audioLength.removeFromSuperview()
             }
-            
         }
-        
     }
     
     func startRecord() {
@@ -307,8 +304,6 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     func sendAudio() {
         
         DispatchQueue.main.async {
-//            self.addPlayerView(isShowing: false)
-//            self.sendView.removeFromSuperview()
             
             self.view.addSubview(self.blurView)
             self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

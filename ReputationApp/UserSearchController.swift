@@ -38,7 +38,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     let messageLabel: UILabel = {
         let ml = UILabel()
-        ml.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
+        ml.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
+        ml.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         ml.numberOfLines = 0
         ml.textAlignment = .center
         return ml

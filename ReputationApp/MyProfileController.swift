@@ -44,7 +44,7 @@ class MyProfileController: UIViewController {
     let fullnameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = UIFont(name: "SFUIDisplay-Regular", size: 14)
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textColor = .white
         label.numberOfLines = 0
         return label
