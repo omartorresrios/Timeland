@@ -38,6 +38,11 @@ class PreviewVideoContainerView: UIViewController {
         return label
     }()
     
+    let defaultImage: UIImageView = {
+        let image = UIImageView()
+        return image
+    }()
+    
     func handleCancel() {
         view.removeFromSuperview()
     }
@@ -46,6 +51,10 @@ class PreviewVideoContainerView: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
+        view.addSubview(defaultImage)
+        defaultImage.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        defaultImage.layer.zPosition = 2
         
         view.addSubview(userNameLabel)
         userNameLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

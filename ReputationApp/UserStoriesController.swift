@@ -137,12 +137,8 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             
             let authToken = userToken["authenticationToken"] as! String
             
-            print("Token: \(userToken)")
-            
             // Set Authorization header
             let header = ["Authorization": "Token token=\(authToken)"]
-            
-            print("THE HEADER: \(header)")
             
             Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userId!)/events", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { response in
                 
@@ -153,8 +149,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 
                 switch response.result {
                 case .success(let JSON):
-                    
-                    print("\nTHE USER EVENTS: \(JSON)\n")
                     
                     let jsonArray = JSON as! [[String: Any]]
                     
@@ -255,6 +249,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         
         var imageCache = [String: UIImage]()
         var lastURLUsedToLoadImage: String?
+        var defaultImg: UIImage!
         
         cell.photoImageView.image = nil // PUT A PLACEHOLDER
         
@@ -288,6 +283,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                     
                     DispatchQueue.main.async {
                         cell.photoImageView.image =  frameImg
+                        defaultImg = frameImg
                     }
                     
                 } catch let error as NSError {
@@ -299,6 +295,8 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             print("THE URL DOES NOT EXIST")
         }
         
+        
+        
 //        let duration = NSInteger(event.duration)
 //        let seconds = String(format: "%02d", duration % 60)
 //        let minutes = (duration / 60) % 60
@@ -307,6 +305,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         cell.goToWatch = {
             
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
+            self.previewVideoContainerView.defaultImage.image = defaultImg
             
             do {
                 let videoURL = URL(string: event.event_url)
@@ -320,12 +319,14 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
                 
                 self.previewVideoContainerView.view.layer.addSublayer(self.playerLayer)
                 
+                self.previewVideoContainerView.defaultImage.layer.zPosition = -5
+                
                 self.player.play()
             } catch {
                 print("Some error to reproduce video")
             }
             
-            self.playerLayer.zPosition = -5
+            self.playerLayer.zPosition = -1
             
             // deleting the Z in the final
             let zEndIndex = createdAt.index(createdAt.endIndex, offsetBy: -1)
@@ -346,7 +347,6 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
             dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
             dateFormatter.locale = tempLocale // reset the locale
             let dateString = dateFormatter.string(from: date)
-            print("EXACT_DATE : \(dateString)")
             
             let timeLabel = UILabel()
             timeLabel.tintColor = .black

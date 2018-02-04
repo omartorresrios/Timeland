@@ -127,15 +127,40 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         return button
     }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    let flashButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.tintColor = UIColor.white
+        button.setImage(#imageLiteral(resourceName: "flash_off").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.addTarget(self, action: #selector(handleFlash), for: .touchUpInside)
+        return button
+    }()
+    
+    var flashing = false
+    
+    func handleFlash() {
+        if flashing {
+            flashButton.setImage(#imageLiteral(resourceName: "flash_on").withRenderingMode(.alwaysTemplate), for: .normal)
+            flashEnabled = true
+        } else {
+            flashButton.setImage(#imageLiteral(resourceName: "flash_off").withRenderingMode(.alwaysTemplate), for: .normal)
+            flashEnabled = false
+        }
+        flashing = !flashing
+    }
+    
+    func setupCameraOptions() {
         cameraDelegate = self
-        defaultCamera = .front
+        defaultCamera = .rear
         maximumVideoDuration = 20.0
         shouldUseDeviceOrientation = false
         allowAutoRotate = false
         audioEnabled = true
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupCameraOptions()
         
         fakeViews()
     }
@@ -161,7 +186,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                 self.sendSuccesView.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
                 
                 self.sendSuccesView.addSubview(self.sendSuccesIconImageView)
-                self.sendSuccesIconImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 30, height: 30)
+                self.sendSuccesIconImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 25, height: 25)
                 self.sendSuccesIconImageView.centerXAnchor.constraint(equalTo: self.sendSuccesView.centerXAnchor).isActive = true
                 self.sendSuccesIconImageView.centerYAnchor.constraint(equalTo: self.sendSuccesView.centerYAnchor).isActive = true
                 
@@ -174,11 +199,14 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                     
                 }, completion: { (_) in
                     
+                    self.swiftyCamButton.delegate = self
+                    self.swiftyButton()
+                    
                     DispatchQueue.main.async {
                         self.blurView.removeFromSuperview()
+                        self.playerLayer.removeFromSuperlayer()
                         self.player.pause()
-                        let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                        appDel.logUser(forAppDelegate: false)
+                        self.swiftyCamButton.transform = .identity
                     }
                 })  
             })
@@ -211,6 +239,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             
             DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!, completion: { (success) in
                 if success {
+                    FileManager.default.clearTmpDirectory()
                     self.showSuccesMessage()
                 }
             })
@@ -251,6 +280,9 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         view.addSubview(swiftyCamButton)
         swiftyCamButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 75, height: 75)
         swiftyCamButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        view.addSubview(flashButton)
+        flashButton.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 18, width: 25, height: 25)
         
         let button = UIButton()
         button.setTitle("jaja", for: .normal)
@@ -347,8 +379,14 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         
     }
     
+    func stopSwiftyButtonBecauseError() {
+        
+    }
+    
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
         print("recording video")
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(invalidateTimerAndCircleView), name: NSNotification.Name(rawValue: "ErrorWhileRecording"), object: nil)
         
         startTime = Date().timeIntervalSinceReferenceDate
         timerTest = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(update), userInfo: nil, repeats: true)
@@ -362,11 +400,19 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         }
     }
     
+    func invalidateTimerAndCircleView() {
+        FileManager.default.clearTmpDirectory()
+        DispatchQueue.main.async {
+            self.timerTest?.invalidate()
+            self.timerTest = nil
+            self.circleView.pauseAnimation()
+        }
+    }
+    
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
         print("finishing recording video")
         
         DispatchQueue.main.async {
-            // Cancel the timer
             self.timerTest?.invalidate()
             self.timerTest = nil
             self.circleView.pauseAnimation()
@@ -379,16 +425,17 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     }
     
     func handleCancel() {
-        playerLayer.removeFromSuperlayer()
-        player.pause()
-        cancelButton.removeFromSuperview()
-        saveButton.removeFromSuperview()
-        sendView.removeFromSuperview()
-        swiftyCamButton.transform = .identity
+        FileManager.default.clearTmpDirectory()
+        self.swiftyCamButton.delegate = self
+        self.swiftyButton()
         
         DispatchQueue.main.async {
-            self.swiftyCamButton.delegate = self
-            self.swiftyButton()
+            self.playerLayer.removeFromSuperlayer()
+            self.player.pause()
+            self.cancelButton.removeFromSuperview()
+            self.saveButton.removeFromSuperview()
+            self.sendView.removeFromSuperview()
+            self.swiftyCamButton.transform = .identity
         }
         
     }
@@ -435,4 +482,18 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         print(error)
     }
     
+}
+
+extension FileManager {
+    func clearTmpDirectory() {
+        do {
+            let tmpDirectory = try contentsOfDirectory(atPath: NSTemporaryDirectory())
+            try tmpDirectory.forEach {[unowned self] file in
+                let path = String.init(format: "%@%@", NSTemporaryDirectory(), file)
+                try self.removeItem(atPath: path)
+            }
+        } catch {
+            print(error)
+        }
+    }
 }

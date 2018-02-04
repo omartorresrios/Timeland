@@ -130,12 +130,8 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
             
             let authToken = userToken["authenticationToken"] as! String
             
-            print("Token: \(userToken)")
-            
             // Set Authorization header
             let header = ["Authorization": "Token token=\(authToken)"]
-            
-            print("THE HEADER: \(header)")
             
             Alamofire.request("https://protected-anchorage-18127.herokuapp.com/api/\(userId!)/events", method: .get, parameters: nil, encoding: URLEncoding.default, headers: header).responseJSON { response in
                 
@@ -147,8 +143,6 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
                 switch response.result {
                 case .success(let JSON):
                     
-                    print("\nTHE USER EVENTS: \(JSON)\n")
-                    
                     let jsonArray = JSON as! [[String: Any]]
                     
                     if jsonArray.count == 0 {
@@ -158,13 +152,11 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
                     
                     for item in (JSON as? [[String: Any]])! {
                         guard let storieDictionary = item as? [String: Any] else { return }
-                        print("\nstorieDictionary: \(storieDictionary)")
                         
                         let event_url = storieDictionary["event_url"] as! String
                         let duration = storieDictionary["duration"] as! String
                         let createdAt = storieDictionary["created_at"] as! String
                         let userFullname = storieDictionary["user_fullname"] as! String
-                        
                         
                         self.finalDuration = self.parseDuration(duration)
                         
@@ -248,6 +240,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
         
         var imageCache = [String: UIImage]()
         var lastURLUsedToLoadImage: String?
+        var defaultImg: UIImage!
         
         cell.photoImageView.image = nil // PUT A PLACEHOLDER
         
@@ -281,6 +274,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
                 
                 DispatchQueue.main.async {
                     cell.photoImageView.image =  frameImg
+                    defaultImg = frameImg
                 }
                 
             } catch let error as NSError {
@@ -300,6 +294,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
         cell.goToWatch = {
             
             self.present(self.previewVideoContainerView, animated: false, completion: nil)
+            self.previewVideoContainerView.defaultImage.image = defaultImg
             
             let videoURL = URL(string: event.event_url)
             self.player = AVPlayer(url: videoURL!)
@@ -308,6 +303,8 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
             self.playerLayer.frame = self.previewVideoContainerView.view.bounds
             
             self.previewVideoContainerView.view.layer.addSublayer(self.playerLayer)
+            
+            self.previewVideoContainerView.defaultImage.layer.zPosition = -5
             
             self.player.play()
             
@@ -332,7 +329,6 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
             dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
             dateFormatter.locale = tempLocale // reset the locale
             let dateString = dateFormatter.string(from: date)
-            print("EXACT_DATE : \(dateString)")
             
             let timeLabel = UILabel()
             timeLabel.tintColor = .black
