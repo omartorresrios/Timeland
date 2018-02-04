@@ -107,11 +107,11 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Sets whether Pinch to Zoom is enabled for the capture session
 
-	public var pinchToZoom                       = true
+//    public var pinchToZoom                       = true
 
 	/// Sets the maximum zoom scale allowed during gestures gesture
 
-	public var maxZoomScale				         = CGFloat.greatestFiniteMagnitude
+//    public var maxZoomScale                         = CGFloat.greatestFiniteMagnitude
   
 	/// Sets whether Tap to Focus and Tap to Adjust Exposure is enabled for the capture session
 
@@ -133,11 +133,11 @@ open class SwiftyCamViewController: UIViewController {
     
     /// Sets whether swipe vertically to zoom is supported
     
-    public var swipeToZoom                     = true
+//    public var swipeToZoom                     = true
     
     /// Sets whether swipe vertically gestures should be inverted
     
-    public var swipeToZoomInverted             = false
+//    public var swipeToZoomInverted             = false
 
 	/// Set default launch camera
 
@@ -1022,11 +1022,10 @@ extension SwiftyCamViewController : SwiftyCamButtonDelegate {
     }
     
     public func buttonDidChangedLongPress() {
-        print("jujuju")
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture(pan:)))
-        panGesture.delegate = self
+//        panGesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture(pan:)))
+//        panGesture.delegate = self
 //        self.view.addGestureRecognizer(panGesture)
-        previewLayer.addGestureRecognizer(panGesture)
+//        previewLayer.addGestureRecognizer(panGesture)
     }
 
 	/// Set UILongPressGesture begin to begin end video
@@ -1106,6 +1105,7 @@ extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
         
 		if error != nil {
 			print("[SwiftyCam]: Movie file finishing error: \(error)")
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ErrorWhileRecording"), object: nil)
 		} else {
 			//Call delegate function with the URL of the outputfile
 			DispatchQueue.main.async {
@@ -1121,30 +1121,30 @@ extension SwiftyCamViewController {
 
 	/// Handle pinch gesture
 
-	@objc fileprivate func zoomGesture(pinch: UIPinchGestureRecognizer) {
-		guard pinchToZoom == true && self.currentCamera == .rear else {
-			//ignore pinch 
-			return
-		}
-		do {
-			let captureDevice = AVCaptureDevice.devices().first as? AVCaptureDevice
-			try captureDevice?.lockForConfiguration()
-
-			zoomScale = min(maxZoomScale, max(1.0, min(beginZoomScale * pinch.scale,  captureDevice!.activeFormat.videoMaxZoomFactor)))
-
-			captureDevice?.videoZoomFactor = zoomScale
-
-			// Call Delegate function with current zoom scale
-			DispatchQueue.main.async {
-				self.cameraDelegate?.swiftyCam(self, didChangeZoomLevel: self.zoomScale)
-			}
-
-			captureDevice?.unlockForConfiguration()
-
-		} catch {
-			print("[SwiftyCam]: Error locking configuration")
-		}
-	}
+//    @objc fileprivate func zoomGesture(pinch: UIPinchGestureRecognizer) {
+//        guard pinchToZoom == true && self.currentCamera == .rear else {
+//            //ignore pinch
+//            return
+//        }
+//        do {
+//            let captureDevice = AVCaptureDevice.devices().first as? AVCaptureDevice
+//            try captureDevice?.lockForConfiguration()
+//
+//            zoomScale = min(maxZoomScale, max(1.0, min(beginZoomScale * pinch.scale,  captureDevice!.activeFormat.videoMaxZoomFactor)))
+//
+//            captureDevice?.videoZoomFactor = zoomScale
+//
+//            // Call Delegate function with current zoom scale
+//            DispatchQueue.main.async {
+//                self.cameraDelegate?.swiftyCam(self, didChangeZoomLevel: self.zoomScale)
+//            }
+//
+//            captureDevice?.unlockForConfiguration()
+//
+//        } catch {
+//            print("[SwiftyCam]: Error locking configuration")
+//        }
+//    }
 
 	/// Handle single tap gesture
 
@@ -1192,47 +1192,47 @@ extension SwiftyCamViewController {
 		switchCamera()
 	}
     
-    @objc func panGesture(pan: UIPanGestureRecognizer) {
-        
-        guard swipeToZoom == true && self.currentCamera == .rear else {
-            //ignore pan
-            return
-        }
-        let currentTranslation    = pan.translation(in: view).y
-        let translationDifference = currentTranslation - previousPanTranslation
-        
-        do {
-            let captureDevice = AVCaptureDevice.devices().first as? AVCaptureDevice
-            try captureDevice?.lockForConfiguration()
-            
-            let currentZoom = captureDevice?.videoZoomFactor ?? 0.0
-            
-            if swipeToZoomInverted == true {
-                zoomScale = min(maxZoomScale, max(1.0, min(currentZoom - (translationDifference / 75),  captureDevice!.activeFormat.videoMaxZoomFactor)))
-            } else {
-                zoomScale = min(maxZoomScale, max(1.0, min(currentZoom + (translationDifference / 75),  captureDevice!.activeFormat.videoMaxZoomFactor)))
-
-            }
-            
-            captureDevice?.videoZoomFactor = zoomScale
-            
-            // Call Delegate function with current zoom scale
-            DispatchQueue.main.async {
-                self.cameraDelegate?.swiftyCam(self, didChangeZoomLevel: self.zoomScale)
-            }
-            
-            captureDevice?.unlockForConfiguration()
-            
-        } catch {
-            print("[SwiftyCam]: Error locking configuration")
-        }
-        
-        if pan.state == .ended || pan.state == .failed || pan.state == .cancelled {
-            previousPanTranslation = 0.0
-        } else {
-            previousPanTranslation = currentTranslation
-        }
-    }
+//    @objc func panGesture(pan: UIPanGestureRecognizer) {
+//        
+//        guard swipeToZoom == true && self.currentCamera == .rear else {
+//            //ignore pan
+//            return
+//        }
+//        let currentTranslation    = pan.translation(in: view).y
+//        let translationDifference = currentTranslation - previousPanTranslation
+//        
+//        do {
+//            let captureDevice = AVCaptureDevice.devices().first as? AVCaptureDevice
+//            try captureDevice?.lockForConfiguration()
+//            
+//            let currentZoom = captureDevice?.videoZoomFactor ?? 0.0
+//            
+//            if swipeToZoomInverted == true {
+//                zoomScale = min(maxZoomScale, max(1.0, min(currentZoom - (translationDifference / 75),  captureDevice!.activeFormat.videoMaxZoomFactor)))
+//            } else {
+//                zoomScale = min(maxZoomScale, max(1.0, min(currentZoom + (translationDifference / 75),  captureDevice!.activeFormat.videoMaxZoomFactor)))
+//
+//            }
+//            
+//            captureDevice?.videoZoomFactor = zoomScale
+//            
+//            // Call Delegate function with current zoom scale
+//            DispatchQueue.main.async {
+//                self.cameraDelegate?.swiftyCam(self, didChangeZoomLevel: self.zoomScale)
+//            }
+//            
+//            captureDevice?.unlockForConfiguration()
+//            
+//        } catch {
+//            print("[SwiftyCam]: Error locking configuration")
+//        }
+//        
+//        if pan.state == .ended || pan.state == .failed || pan.state == .cancelled {
+//            previousPanTranslation = 0.0
+//        } else {
+//            previousPanTranslation = currentTranslation
+//        }
+//    }
 
 	/**
 	Add pinch gesture recognizer and double tap gesture recognizer to currentView
@@ -1242,9 +1242,9 @@ extension SwiftyCamViewController {
 	*/
 
 	fileprivate func addGestureRecognizers() {
-		pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(zoomGesture(pinch:)))
-		pinchGesture.delegate = self
-		previewLayer.addGestureRecognizer(pinchGesture)
+//        pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(zoomGesture(pinch:)))
+//        pinchGesture.delegate = self
+//        previewLayer.addGestureRecognizer(pinchGesture)
 
 		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(singleTapGesture(tap:)))
 		singleTapGesture.numberOfTapsRequired = 1
