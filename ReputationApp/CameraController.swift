@@ -194,7 +194,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                 
             }, completion: { (completed) in
                 
-                UIView.animate(withDuration: 0.5, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 1.0, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
                     
                     self.sendSuccesView.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
                     self.sendSuccesView.removeFromSuperview()

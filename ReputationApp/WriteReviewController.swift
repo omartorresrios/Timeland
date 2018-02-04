@@ -246,8 +246,19 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         } else {
             
             startRecordButton.tintColor = .red
-            sendView.removeFromSuperview()
-            addPlayerView(isShowing: false)
+            
+            if self.view.subviews.contains(sendView) && self.view.subviews.contains(playAudioButton) && self.view.subviews.contains(progressView) && self.view.subviews.contains(audioLength) {
+                print("HAY ELEMENTOS")
+                DispatchQueue.main.async {
+                    self.playAudioButton.removeFromSuperview()
+                    self.progressView.removeFromSuperview()
+                    self.audioLength.removeFromSuperview()
+                    self.sendView.removeFromSuperview()
+                }
+            } else {
+                print("NO HAY NINGUN ELEMENTO")
+            }
+            
             do {
                 let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { decibelSample in
                     print("decibelSample: \(decibelSample)")
