@@ -31,6 +31,8 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     var videoUrl: URL?
     var player = AVPlayer()
     var playerLayer = AVPlayerLayer()
+    let customAlertMessage = CustomAlertMessage()
+    var tap = UITapGestureRecognizer()
     
     let videoCaption: UITextView = {
         let tv = UITextView()
@@ -173,7 +175,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     func showSuccesMessage() {
         DispatchQueue.main.async {
             
-            self.loader.stopAnimating()
+            self.loader.removeFromSuperview()
             
             self.sendSuccesView.layer.transform = CATransform3DMakeScale(0, 0, 0)
             
@@ -195,7 +197,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                 UIView.animate(withDuration: 0.5, delay: 0.75, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
                     
                     self.sendSuccesView.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
-                    self.sendSuccesView.alpha = 0
+                    self.sendSuccesView.removeFromSuperview()
                     
                 }, completion: { (_) in
                     
@@ -241,6 +243,26 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
                 if success {
                     FileManager.default.clearTmpDirectory()
                     self.showSuccesMessage()
+                } else {
+                    DispatchQueue.main.async {
+                        
+                        self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+                        
+                        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                            self.view.addSubview(self.customAlertMessage)
+                            self.customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                            self.customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                            
+                            self.customAlertMessage.iconMessage.image = "😕".image()
+                            self.customAlertMessage.labelMessage.text = "No se pudo enviar tu momento. Intenta de nuevo.\n¡Lo sentimos!"
+                            
+                            self.customAlertMessage.transform = .identity
+                            
+                        }, completion: nil)
+                    }
+                    self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+                    self.view.addGestureRecognizer(self.tap)
+                    self.tap.delegate = self
                 }
             })
             
@@ -250,10 +272,31 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             
             print("Final file size: \(Double(data.length / 1048576)) mb")
             
-            
         } else {
             print("Impossible retrieve token")
         }
+    }
+    
+    func dismissviewMessage() {
+        self.swiftyCamButton.delegate = self
+        self.swiftyButton()
+        
+        DispatchQueue.main.async {
+            self.customAlertMessage.removeFromSuperview()
+            self.view.removeGestureRecognizer(self.tap)
+            self.blurView.removeFromSuperview()
+            self.loader.removeFromSuperview()
+            self.playerLayer.removeFromSuperlayer()
+            self.player.pause()
+            self.swiftyCamButton.transform = .identity
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: customAlertMessage))!{
+            return false
+        }
+        return true
     }
     
     func addCircleView() {
@@ -376,10 +419,6 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
         sendButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 23, height: 23)
         sendButton.centerYAnchor.constraint(equalTo: sendView.centerYAnchor).isActive = true
         sendButton.centerXAnchor.constraint(equalTo: sendView.centerXAnchor).isActive = true
-        
-    }
-    
-    func stopSwiftyButtonBecauseError() {
         
     }
     

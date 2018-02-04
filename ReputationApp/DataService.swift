@@ -163,6 +163,10 @@ class DataService {
                         print("send video successfully")
                         completion(true)
                     }
+                    
+                    if response.result.isFailure == true {
+                        completion(false)
+                    }
                 }
                 
             case .failure(let encodingError):
