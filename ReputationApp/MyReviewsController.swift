@@ -38,7 +38,7 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
     let closeView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor.rgb(red: 49, green: 233, blue: 129)
         return view
     }()
     
@@ -63,7 +63,7 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
             layout.scrollDirection = .vertical
             layout.minimumLineSpacing = 0
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 31, left: 0, bottom: 0, right: 0)
+            layout.sectionInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         }
         
         collectionView?.register(UserReviewsCell.self, forCellWithReuseIdentifier: cellId)

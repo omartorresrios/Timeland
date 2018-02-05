@@ -17,7 +17,6 @@ class UserReviewsCell: UICollectionViewCell {
         label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 15)
         label.textAlignment = .center
-        label.numberOfLines = 0
         return label
     }()
     
@@ -93,7 +92,7 @@ class UserReviewsCell: UICollectionViewCell {
         label.textColor = .gray
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 12)
         label.textAlignment = .center
-        label.numberOfLines = 0
+//        label.numberOfLines = 0
         label.text = "hoy"
         return label
     }()

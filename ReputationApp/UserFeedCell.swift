@@ -23,7 +23,7 @@ class UserFeedCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = 20
         view.backgroundColor = UIColor(white: 1, alpha: 0.3)
-        view.layer.borderWidth = 2
+        view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.white.cgColor
         return view
     }()

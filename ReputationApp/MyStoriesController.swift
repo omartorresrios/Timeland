@@ -30,7 +30,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
     let closeView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor.rgb(red: 49, green: 233, blue: 129)
         return view
     }()
     
@@ -64,7 +64,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
             layout.scrollDirection = .vertical
             layout.minimumLineSpacing = 0
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 46, left: 8, bottom:8, right: 8)
+            layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom:8, right: 8)
         }
         
         // Register cell classes
