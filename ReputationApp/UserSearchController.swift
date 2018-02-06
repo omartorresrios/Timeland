@@ -54,17 +54,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     let searchButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .gray
+        button.tintColor = UIColor.rgb(red: 49, green: 233, blue: 129)
         button.addTarget(self, action: #selector(recordAudio(_:)), for: .touchUpInside)
-        return button
-    }()
-
-    let stopButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Otra búsqueda", for: .normal)
-        button.backgroundColor = .black
-        button.addTarget(self, action: #selector(stopAudio(_:)), for: .touchUpInside)
-        button.isHidden = true
         return button
     }()
     
@@ -123,7 +114,14 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         // General properties of the view
         navigationController?.tabBarController?.tabBar.isHidden = false
         UIApplication.shared.isStatusBarHidden = true
-        
+    }
+    
+    func animateRecordButton() {
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.5, delay: 0.0, options:[.repeat, .autoreverse], animations: {
+                self.searchButton.tintColor = UIColor.rgb(red: 255, green: 255, blue: 15)
+            }, completion:  nil)
+        }
     }
     
     func loadAllUsers(completion: @escaping (Bool) -> ()) {
@@ -181,13 +179,10 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                         completion(true)
                         
                         self.view.addSubview(self.searchButton)
-                        self.searchButton.anchor(top: nil, left: nil, bottom: self.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 30, paddingRight: 0, width: 50, height: 50)
+                        self.searchButton.anchor(top: nil, left: nil, bottom: self.view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 0, width: 50, height: 50)
                         self.searchButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-                        self.searchButton.adjustsImageWhenHighlighted = false
                         
-                        self.view.addSubview(self.stopButton)
-                        self.stopButton.anchor(top: nil, left: nil, bottom: self.searchButton.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 50, height: 50)
-                        self.stopButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+                        self.searchButton.adjustsImageWhenHighlighted = false
                         
                         self.loader.stopAnimating()
                         
@@ -286,7 +281,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                     
                     self?.loader.startAnimating()
                     self?.loader.isHidden = false
-                    self?.searchButton.tintColor = .gray
+                    self?.searchButton.tintColor = UIColor.rgb(red: 49, green: 233, blue: 129)
                     
                     var finished = false
                     print(response)
@@ -320,7 +315,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     func recordAudio(_ sender: NSObject) {
         messageLabel.isHidden = true
-        searchButton.tintColor = .yellow
+        self.animateRecordButton()
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(AVAudioSessionCategoryRecord)
