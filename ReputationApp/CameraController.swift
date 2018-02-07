@@ -10,6 +10,7 @@ import UIKit
 import SwiftyCam
 import Photos
 import AVFoundation
+import JDStatusBarNotification
 import MediaPlayer
 import Alamofire
 import Locksmith
@@ -161,15 +162,23 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupCameraOptions()
-        
         fakeViews()
+        // Reachability for checking internet connection
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityStatusChanged), name: NSNotification.Name(rawValue: "ReachStatusChanged"), object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(SetupSwiftyCamButton), name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+        SetupSwiftyCamButton()
+    }
+    
+    func reachabilityStatusChanged() {
+        print("Checking connectivity...")
+        self.customAlertMessage.removeFromSuperview()
+        self.view.removeGestureRecognizer(self.tap)
+        self.blurView.removeFromSuperview()
     }
     
     func showSuccesMessage() {
@@ -216,67 +225,103 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     }
     
     func handleSend() {
-        DispatchQueue.main.async {
-            self.cancelButton.removeFromSuperview()
-            self.saveButton.removeFromSuperview()
-            self.sendView.removeFromSuperview()
-            
-            
-            self.view.addSubview(self.blurView)
-            self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-            
-            self.blurView.addSubview(self.loader)
-            self.loader.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-            self.loader.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
-            self.loader.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
-            
-        }
         
-        print("this is the final url: ", videoUrl!)
-        // Retreieve Auth_Token from Keychain
-        if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
+        if (reachability?.isReachable)! {
             
-            let authToken = userToken["authenticationToken"] as! String
-            print("the current user token: \(userToken)")
-            
-            DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!, completion: { (success) in
-                if success {
-                    FileManager.default.clearTmpDirectory()
-                    self.showSuccesMessage()
-                } else {
-                    DispatchQueue.main.async {
-                        
-                        self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                        
-                        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                            self.view.addSubview(self.customAlertMessage)
-                            self.customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
-                            self.customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-                            
-                            self.customAlertMessage.iconMessage.image = "😕".image()
-                            self.customAlertMessage.labelMessage.text = "No se pudo enviar tu momento. Intenta de nuevo.\n¡Lo sentimos!"
-                            
-                            self.customAlertMessage.transform = .identity
-                            
-                        }, completion: nil)
-                    }
-                    self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
-                    self.view.addGestureRecognizer(self.tap)
-                    self.tap.delegate = self
-                }
-            })
-            
-            guard let data = NSData(contentsOf: videoUrl!) else {
-                return
+            DispatchQueue.main.async {
+                self.cancelButton.removeFromSuperview()
+                self.saveButton.removeFromSuperview()
+                self.sendView.removeFromSuperview()
+                
+                
+                self.view.addSubview(self.blurView)
+                self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                
+                self.blurView.addSubview(self.loader)
+                self.loader.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                self.loader.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
+                self.loader.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
+                
             }
             
-            print("Final file size: \(Double(data.length / 1048576)) mb")
-            
+            print("this is the final url: ", videoUrl!)
+            // Retreieve Auth_Token from Keychain
+            if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
+                
+                let authToken = userToken["authenticationToken"] as! String
+                print("the current user token: \(userToken)")
+                
+                DataService.instance.shareVideo(authToken: authToken, videoCaption: self.videoCaption, videoUrl: videoUrl!, duration: finalDuration!, completion: { (success) in
+                    if success {
+                        FileManager.default.clearTmpDirectory()
+                        self.showSuccesMessage()
+                    } else {
+                        DispatchQueue.main.async {
+                            
+                            self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+                            
+                            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                                self.view.addSubview(self.customAlertMessage)
+                                self.customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                                self.customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                                
+                                self.customAlertMessage.iconMessage.image = "😕".image()
+                                self.customAlertMessage.labelMessage.text = "No se pudo enviar tu momento. Intenta de nuevo.\n¡Lo sentimos!"
+                                
+                                self.customAlertMessage.transform = .identity
+                                
+                            }, completion: nil)
+                        }
+                        self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+                        self.view.addGestureRecognizer(self.tap)
+                        self.tap.delegate = self
+                    }
+                })
+                
+                guard let data = NSData(contentsOf: videoUrl!) else {
+                    return
+                }
+                
+                print("Final file size: \(Double(data.length / 1048576)) mb")
+                
+            } else {
+                print("Impossible retrieve token")
+            }
         } else {
-            print("Impossible retrieve token")
+            
+            DispatchQueue.main.async {
+                
+                self.view.addSubview(self.blurView)
+                self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                
+                self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
+                
+                UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                    self.blurView.addSubview(self.customAlertMessage)
+                    self.customAlertMessage.anchor(top: nil, left: self.blurView.leftAnchor, bottom: nil, right: self.blurView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                    self.customAlertMessage.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
+                    
+                    self.customAlertMessage.iconMessage.image = "😕".image()
+                    self.customAlertMessage.labelMessage.text = "¡Revisa tu conexión de internet e intenta de nuevo!"
+                    
+                    self.customAlertMessage.transform = .identity
+                    
+                }, completion: nil)
+            }
+            self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissConnectionViewMessage))
+            self.blurView.addGestureRecognizer(self.tap)
+            self.tap.delegate = self
         }
+     
     }
     
+    func dismissConnectionViewMessage() {
+        DispatchQueue.main.async {
+            self.blurView.removeFromSuperview()
+            self.blurView.removeGestureRecognizer(self.tap)
+        }
+    }
+        
     func dismissviewMessage() {
         self.swiftyCamButton.delegate = self
         self.swiftyButton()

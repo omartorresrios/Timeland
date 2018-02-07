@@ -27,6 +27,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     let customAlertMessage = CustomAlertMessage()
     var tap = UITapGestureRecognizer()
     var alertTap = UITapGestureRecognizer()
+    var connectionTap = UITapGestureRecognizer()
     let userContentOptionsView = UserContentOptionsView()
     
     let loader: UIActivityIndicatorView = {
@@ -62,6 +63,12 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     let supportAlertView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        return view
+    }()
+    
+    let blurConnectionView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 0.8)
         return view
     }()
     
@@ -103,7 +110,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         // Initialize functions
         loadAllUsers { (success) in
             if success {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
+//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "AllUsersLoaded"), object: nil)
             }
         }
     }
@@ -194,10 +201,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
             }
         } else {
             self.loader.stopAnimating()
-            
-            let alert = UIAlertController(title: "Error", message: "Tu conexión a internet está fallando. 🤔 Intenta de nuevo.", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.showCustomAlertMessage(image: "😕".image(), message: "¡Revisa tu conexión de internet e intenta de nuevo!", isForTimeOut: false)
         }
     }
     
@@ -220,7 +224,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         collectionView?.reloadData()
     }
     
-    func showCustomAlertMessage() {
+    func showCustomAlertMessage(image: UIImage, message: String, isForTimeOut: Bool) {
         
         DispatchQueue.main.async {
             
@@ -238,18 +242,50 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                 self.customAlertMessage.anchor(top: nil, left: self.supportAlertView.leftAnchor, bottom: nil, right: self.supportAlertView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
                 self.customAlertMessage.centerYAnchor.constraint(equalTo: self.supportAlertView.centerYAnchor).isActive = true
                 
-                self.customAlertMessage.iconMessage.image = "💩".image()
-                self.customAlertMessage.labelMessage.text = "¡Hubo un problema!\n\n1. Se excedió el tiempo de espera (1 min. máx.) ó\n2. Tu tono de voz fue muy bajo."
+                self.customAlertMessage.iconMessage.image = image
+                self.customAlertMessage.labelMessage.text = message
                 
                 self.customAlertMessage.transform = .identity
                 
-                self.alertTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissAlertMessage))
-                self.supportAlertView.addGestureRecognizer(self.alertTap)
-                self.alertTap.delegate = self
+                if isForTimeOut == true {
+                    self.alertTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissAlertMessage))
+                    self.supportAlertView.addGestureRecognizer(self.alertTap)
+                    self.alertTap.delegate = self
+                } else { // It is for internet connection when tap the record button
+                    self.connectionTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissConnectionviewMessage))
+                    self.supportAlertView.addGestureRecognizer(self.connectionTap)
+                    self.connectionTap.delegate = self
+                }
+                
                 
             }, completion: nil)
         }
-        
+    }
+    
+    func dismissConnectionviewMessage() {
+        supportAlertView.removeFromSuperview()
+        self.searchButton.isHidden = false
+        supportAlertView.removeGestureRecognizer(self.connectionTap)
+    }
+    
+    func dismissContainerView() {
+        userContentOptionsView.removeFromSuperview()
+        userContentOptionsView.viewGeneral.removeGestureRecognizer(tap)
+    }
+    
+    func dismissAlertMessage() {
+        supportAlertView.removeFromSuperview()
+        resetAudio()
+        searchButton.tintColor = .gray
+        collectionView.backgroundColor = .white
+        supportAlertView.removeGestureRecognizer(alertTap)
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: userContentOptionsView.viewContainer))! || (touch.view?.isDescendant(of: customAlertMessage))! {
+            return false
+        }
+        return true
     }
     
     func processSampleData(_ data: Data) -> Void {
@@ -273,7 +309,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                     print("OCURRIÓ UN ERROR: ", error)
                     self?.loader.stopAnimating()
                     
-                    self?.showCustomAlertMessage()
+                    self?.showCustomAlertMessage(image: "💩".image(), message: "¡Hubo un problema!\n\n1. Se excedió el tiempo de espera (1 min. máx.) ó\n2. Tu tono de voz fue muy bajo.", isForTimeOut: true)
                     
                     self?.searchButton.isHidden = true
                     
@@ -305,7 +341,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
 
                     if finished {
                         strongSelf.stopAudio(strongSelf)
-                        
                     }
                 }
             })
@@ -314,19 +349,25 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func recordAudio(_ sender: NSObject) {
-        messageLabel.isHidden = true
-        self.animateRecordButton()
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(AVAudioSessionCategoryRecord)
-        } catch {
+        // Check for internet connection
+        if (reachability?.isReachable)! {
             
+            messageLabel.isHidden = true
+            self.animateRecordButton()
+            let audioSession = AVAudioSession.sharedInstance()
+            do {
+                try audioSession.setCategory(AVAudioSessionCategoryRecord)
+            } catch {
+                
+            }
+            audioData = NSMutableData()
+            _ = AudioController.sharedInstance.prepare(specifiedSampleRate: SAMPLE_RATE)
+            SpeechRecognitionService.sharedInstance.sampleRate = SAMPLE_RATE
+            _ = AudioController.sharedInstance.start()
+            
+        } else {
+            self.showCustomAlertMessage(image: "😕".image(), message: "¡Revisa tu conexión de internet e intenta de nuevo!", isForTimeOut: false)
         }
-        audioData = NSMutableData()
-        _ = AudioController.sharedInstance.prepare(specifiedSampleRate: SAMPLE_RATE)
-        SpeechRecognitionService.sharedInstance.sampleRate = SAMPLE_RATE
-        _ = AudioController.sharedInstance.start()
-
     }
     
     func stopAudio(_ sender: NSObject) {
@@ -410,26 +451,6 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
             
         }, completion: nil)
         
-    }
-    
-    func dismissContainerView() {
-        userContentOptionsView.removeFromSuperview()
-        userContentOptionsView.viewGeneral.removeGestureRecognizer(tap)
-    }
-    
-    func dismissAlertMessage() {
-        supportAlertView.removeFromSuperview()
-        resetAudio()
-        searchButton.tintColor = .gray
-        collectionView.backgroundColor = .white
-        supportAlertView.removeGestureRecognizer(alertTap)
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: userContentOptionsView.viewContainer))! || (touch.view?.isDescendant(of: customAlertMessage))! {
-            return false
-        }
-        return true
     }
     
     func reachabilityStatusChanged() {

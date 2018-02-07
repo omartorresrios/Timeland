@@ -14,7 +14,7 @@ import Locksmith
 import Alamofire
 import CoreGraphics
 
-class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
+class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIGestureRecognizerDelegate {
     
     var userReceiverId: String?
     var userReceiverFullname: String?
@@ -28,6 +28,8 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     var actualReview: Review!
     var finalUrl: URL?
     var finalDuration: TimeInterval?
+    var tap = UITapGestureRecognizer()
+    let customAlertMessage = CustomAlertMessage()
     
     var playing: Bool = false {
         willSet {
@@ -57,6 +59,12 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     }()
     
     let blurView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 0.8)
+        return view
+    }()
+    
+    let blurConnectionView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(white: 0, alpha: 0.8)
         return view
@@ -122,10 +130,14 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         view.addGestureRecognizer(tapGesture)
         
         // Reachability for checking internet connection
-//                NotificationCenter.default.addObserver(self, selector: #selector(reachabilityStatusChanged), name: NSNotification.Name(rawValue: "ReachStatusChanged"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityStatusChanged), name: NSNotification.Name(rawValue: "ReachStatusChanged"), object: nil)
         
         addRecordButton()
         
+    }
+    
+    func reachabilityStatusChanged() {
+        print("Checking connectivity...")
     }
     
     func addRecordButton() {
@@ -312,31 +324,77 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         }
     }
     
-    func sendAudio() {
-        
+    func showCustomAlertMessage(image: UIImage, message: String) {
         DispatchQueue.main.async {
             
-            self.view.addSubview(self.blurView)
-            self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+            self.view.addSubview(self.blurConnectionView)
+            self.blurConnectionView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
             
-            self.blurView.addSubview(self.loader)
-            self.loader.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-            self.loader.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
-            self.loader.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
+            self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
             
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                self.blurConnectionView.addSubview(self.customAlertMessage)
+                self.customAlertMessage.anchor(top: nil, left: self.blurConnectionView.leftAnchor, bottom: nil, right: self.blurConnectionView.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                self.customAlertMessage.centerYAnchor.constraint(equalTo: self.blurConnectionView.centerYAnchor).isActive = true
+                
+                self.customAlertMessage.iconMessage.image = image
+                self.customAlertMessage.labelMessage.text = message
+                
+                self.customAlertMessage.transform = .identity
+                
+                self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissviewMessage))
+                self.blurConnectionView.addGestureRecognizer(self.tap)
+                self.tap.delegate = self
+                
+            }, completion: nil)
+        }
+    }
+    
+    func dismissviewMessage() {
+        self.blurConnectionView.removeFromSuperview()
+        self.blurConnectionView.removeGestureRecognizer(tap)
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view?.isDescendant(of: customAlertMessage))!{
+            return false
+        }
+        return true
+    }
+    
+    func sendAudio() {
+        
+        // Check for internet connection
+        if (reachability?.isReachable)! {
+            
+            DispatchQueue.main.async {
+                
+                self.view.addSubview(self.blurView)
+                self.blurView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                
+                self.blurView.addSubview(self.loader)
+                self.loader.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+                self.loader.centerYAnchor.constraint(equalTo: self.blurView.centerYAnchor).isActive = true
+                self.loader.centerXAnchor.constraint(equalTo: self.blurView.centerXAnchor).isActive = true
+                
+            }
+            
+            if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
+                
+                let authToken = userToken["authenticationToken"] as! String
+                print("the current user token: \(userToken)")
+                
+                DataService.instance.shareAudio(authToken: authToken, userId: userId!, audioUrl: self.finalUrl!, duration: self.finalDuration!, completion: { (success) in
+                    if success {
+                        self.showSuccesMessage()
+                    }
+                })
+            }
+            
+        } else {
+            self.showCustomAlertMessage(image: "😕".image(), message: "¡Revisa tu conexión de internet e intenta de nuevo!")
         }
         
-        if let userToken = Locksmith.loadDataForUserAccount(userAccount: "AuthToken") {
-            
-            let authToken = userToken["authenticationToken"] as! String
-            print("the current user token: \(userToken)")
-            
-            DataService.instance.shareAudio(authToken: authToken, userId: userId!, audioUrl: self.finalUrl!, duration: self.finalDuration!, completion: { (success) in
-                if success {
-                    self.showSuccesMessage()
-                }
-            })
-        }
     }
     
     // define a variable to store initial touch position

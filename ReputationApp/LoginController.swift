@@ -108,7 +108,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         return true
     }
     
-    func showCustomAlertMessage() {
+    func showCustomAlertMessage(image: UIImage, message: String) {
         DispatchQueue.main.async {
             
             self.customAlertMessage.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
@@ -118,8 +118,8 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
                 self.customAlertMessage.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
                 self.customAlertMessage.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
                 
-                self.customAlertMessage.iconMessage.image = "✋".image()
-                self.customAlertMessage.labelMessage.text = "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉"
+                self.customAlertMessage.iconMessage.image = image
+                self.customAlertMessage.labelMessage.text = message
                 
                 self.customAlertMessage.transform = .identity
                 
@@ -132,98 +132,104 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        if error != nil {
-            print("Some error while configuring Google login: ", error)
-            return
-        }
         
-        print("user id: ", GIDSignIn.sharedInstance().currentUser.userID)
-        print("user name: ", user.profile.name)
-        print("user email: ", user.profile.email)
-        print("user profile image: ", user.profile.imageURL(withDimension: 400))
-        
-        guard let google_id = GIDSignIn.sharedInstance().currentUser.userID else { return }
-        guard let fullname = user.profile.name else { return }
-        guard let email = user.profile.email else { return }
-        guard let avatar = user.profile.imageURL(withDimension: 400) else { return }
-        
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@(mambo)+\\.pe"
-        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        
-        if emailTest.evaluate(with: email) == true { // Valid email
-            print("Eres mambero")
-            if let data = try? Data(contentsOf: avatar) {
-                self.imageData = data
+        // Check for internet connection
+        if (reachability?.isReachable)! {
+            
+            if error != nil {
+                print("Some error while configuring Google login: ", error)
+                return
             }
             
-            let parameters = ["google_id": google_id, "fullname": fullname, "email": email] as [String : Any]
+            print("user id: ", GIDSignIn.sharedInstance().currentUser.userID)
+            print("user name: ", user.profile.name)
+            print("user email: ", user.profile.email)
+            print("user profile image: ", user.profile.imageURL(withDimension: 400))
             
-            let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/users/google/login")!
+            guard let google_id = GIDSignIn.sharedInstance().currentUser.userID else { return }
+            guard let fullname = user.profile.name else { return }
+            guard let email = user.profile.email else { return }
+            guard let avatar = user.profile.imageURL(withDimension: 400) else { return }
             
-            // Set BASIC authentication header
-            let basicAuthString = "\(HTTPHelper.API_AUTH_NAME):\(HTTPHelper.API_AUTH_PASSWORD)"
-            let utf8str = basicAuthString.data(using: String.Encoding.utf8)
-            let base64EncodedString = utf8str?.base64EncodedString()
+            let emailRegEx = "[A-Z0-9a-z._%+-]+@(mambo)+\\.pe"
+            let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
             
-            let headers = ["Authorization": "Basic \(String(describing: base64EncodedString))"]
-            
-            Alamofire.upload(multipartFormData: { multipartFormData in
-                
-                if let imgData = self.imageData {
-                    multipartFormData.append(imgData, withName: "avatar", fileName: "avatar.jpg", mimeType: "image/png")
+            if emailTest.evaluate(with: email) == true { // Valid email
+                print("Eres mambero")
+                if let data = try? Data(contentsOf: avatar) {
+                    self.imageData = data
                 }
                 
-                for (key, value) in parameters {
-                    multipartFormData.append(((value as Any) as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
-                }
+                let parameters = ["google_id": google_id, "fullname": fullname, "email": email] as [String : Any]
                 
-            }, usingThreshold: UInt64.init() , to: url, method: .post, headers: headers, encodingCompletion: { encodingResult in
+                let url = URL(string: "https://protected-anchorage-18127.herokuapp.com/api/users/google/login")!
                 
-                switch encodingResult {
-                case .success(let upload, _, _):
+                // Set BASIC authentication header
+                let basicAuthString = "\(HTTPHelper.API_AUTH_NAME):\(HTTPHelper.API_AUTH_PASSWORD)"
+                let utf8str = basicAuthString.data(using: String.Encoding.utf8)
+                let base64EncodedString = utf8str?.base64EncodedString()
+                
+                let headers = ["Authorization": "Basic \(String(describing: base64EncodedString))"]
+                
+                Alamofire.upload(multipartFormData: { multipartFormData in
                     
-                    self.updateUserLoggedInFlag()
-                    
-                    upload.responseJSON { response in
-                        print("request: \(response.request!)") // original URL request
-                        print("response: \(response.response!)") // URL response
-                        print("response data: \(response.data!)") // server data
-                        print("result: \(response.result)") // result of response serialization
-                        
-                        if let JSON = response.result.value as? NSDictionary {
-                            let userJSON = JSON["user"] as! NSDictionary
-                            let authToken = userJSON["authenticationToken"] as! String
-                            let userId = userJSON["id"] as! Int
-                            let userName = userJSON["fullname"] as! String
-                            let avatarUrl = userJSON["avatarUrl"] as! String
-                            print("userJSON: \(userJSON)")
-                            print("JSON: \(JSON)")
-                            self.saveApiTokenInKeychain(tokenString: authToken, idInt: userId, nameString: userName, avatarString: avatarUrl)
-                            print("authToken: \(authToken)")
-                            print("userId: \(userId)")
-                            
-                            let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                            appDel.logUser(forAppDelegate: true)
-                            
-                        }
+                    if let imgData = self.imageData {
+                        multipartFormData.append(imgData, withName: "avatar", fileName: "avatar.jpg", mimeType: "image/png")
                     }
                     
-                case .failure(let encodingError):
-                    print("Alamofire proccess failed", encodingError)
-                }
-            })
+                    for (key, value) in parameters {
+                        multipartFormData.append(((value as Any) as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+                    }
+                    
+                }, usingThreshold: UInt64.init() , to: url, method: .post, headers: headers, encodingCompletion: { encodingResult in
+                    
+                    switch encodingResult {
+                    case .success(let upload, _, _):
+                        
+                        self.updateUserLoggedInFlag()
+                        
+                        upload.responseJSON { response in
+                            print("request: \(response.request!)") // original URL request
+                            print("response: \(response.response!)") // URL response
+                            print("response data: \(response.data!)") // server data
+                            print("result: \(response.result)") // result of response serialization
+                            
+                            if let JSON = response.result.value as? NSDictionary {
+                                let userJSON = JSON["user"] as! NSDictionary
+                                let authToken = userJSON["authenticationToken"] as! String
+                                let userId = userJSON["id"] as! Int
+                                let userName = userJSON["fullname"] as! String
+                                let avatarUrl = userJSON["avatarUrl"] as! String
+                                print("userJSON: \(userJSON)")
+                                print("JSON: \(JSON)")
+                                self.saveApiTokenInKeychain(tokenString: authToken, idInt: userId, nameString: userName, avatarString: avatarUrl)
+                                print("authToken: \(authToken)")
+                                print("userId: \(userId)")
+                                
+                                let appDel: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                                appDel.logUser(forAppDelegate: true)
+                                
+                            }
+                        }
+                        
+                    case .failure(let encodingError):
+                        print("Alamofire proccess failed", encodingError)
+                    }
+                })
+                
+            } else {
+                
+                GIDSignIn.sharedInstance().uiDelegate = self
+                GIDSignIn.sharedInstance().delegate = self
+                GIDSignIn.sharedInstance().signOut()
+                                
+                self.showCustomAlertMessage(image: "✋".image(), message: "¡No eres mambero!\n\nDebes entrar con tu correo de Mambo 😉")
+            }
             
         } else {
-            
-            GIDSignIn.sharedInstance().uiDelegate = self
-            GIDSignIn.sharedInstance().delegate = self
-            GIDSignIn.sharedInstance().signOut()
-            
-            print("No eres mambero")
-            
-            self.showCustomAlertMessage()
-            
+            self.showCustomAlertMessage(image: "😕".image(), message: "¡Revisa tu conexión de internet e intenta de nuevo!")
         }
+        
         
         
     }
