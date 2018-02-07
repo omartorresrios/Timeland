@@ -45,6 +45,9 @@ class PreviewVideoContainerView: UIViewController {
     
     let optionButton: UIButton = {
         let button = UIButton()
+        button.layer.shadowOffset = CGSize(width: 0, height: 0)
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 2
         button.setImage(#imageLiteral(resourceName: "dot_vertical_option").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .white
         return button
