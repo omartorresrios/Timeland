@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A000D819202AA21200E6DEA7 /* TermsOfServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000D818202AA21200E6DEA7 /* TermsOfServiceController.swift */; };
 		A024935A20155381006B3199 /* MyReviewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935920155381006B3199 /* MyReviewsController.swift */; };
 		A024935C20155DFB006B3199 /* MyStoriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024935B20155DFA006B3199 /* MyStoriesController.swift */; };
 		A025EDBE201FAFEE00594000 /* CustomAlertMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */; };
@@ -80,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		6E28B6B66614A10E560EF10A /* Pods-ReputationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReputationApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReputationApp/Pods-ReputationApp.release.xcconfig"; sourceTree = "<group>"; };
+		A000D818202AA21200E6DEA7 /* TermsOfServiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceController.swift; sourceTree = "<group>"; };
 		A024935920155381006B3199 /* MyReviewsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReviewsController.swift; sourceTree = "<group>"; };
 		A024935B20155DFA006B3199 /* MyStoriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyStoriesController.swift; sourceTree = "<group>"; };
 		A025EDBD201FAFEB00594000 /* CustomAlertMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertMessage.swift; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				A0EF64231EC407D7006609F7 /* LoginController.swift */,
+				A000D818202AA21200E6DEA7 /* TermsOfServiceController.swift */,
 			);
 			name = Login/SignUp;
 			sourceTree = "<group>";
@@ -597,6 +600,7 @@
 				A0F36A441ECA154F0072B5DD /* NSData+CommonCrypto.m in Sources */,
 				A0F872A81FF9295B00EAF27A /* FileManager+VoiceMemo.swift in Sources */,
 				A025EDBE201FAFEE00594000 /* CustomAlertMessage.swift in Sources */,
+				A000D819202AA21200E6DEA7 /* TermsOfServiceController.swift in Sources */,
 				A0F254181F89C2FD00FC234A /* PreviewPhotoContainerView.swift in Sources */,
 				A0F2541F1F8A80B000FC234A /* CustomAnimationDismisser.swift in Sources */,
 				A0BD09FB1F955E56009C0CD3 /* VideoLibraryContentHeader.swift in Sources */,

@@ -33,6 +33,21 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         return button
     }()
     
+    let termsServiceButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.numberOfLines = 0
+        let attributedTitle = NSMutableAttributedString(string: "Continuando, aceptas nuestros Términos de Servicio.", attributes: [NSFontAttributeName: UIFont(name: "SFUIDisplay-Regular", size: 12)!, NSForegroundColorAttributeName: UIColor.white])
+        button.titleLabel?.textAlignment = .center
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        button.addTarget(self, action: #selector(handleShowTermsOfService), for: .touchUpInside)
+        return button
+    }()
+    
+    func handleShowTermsOfService() {
+        let termsOfServiceController = TermsOfServiceController()
+        present(termsOfServiceController, animated: true, completion: nil)
+    }
+    
     func handleLogin() {
         GIDSignIn.sharedInstance().signIn()
     }
@@ -62,6 +77,9 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         GIDSignIn.sharedInstance().delegate = self
         
         setupCustomLoginButton()
+        
+        view.addSubview(termsServiceButton)
+        termsServiceButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 12, paddingRight: 20, width: 0, height: 0)
     }
     
     func setupCustomLoginButton() {
