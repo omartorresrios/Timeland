@@ -287,6 +287,26 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
         containerView.centerYAnchor.constraint(equalTo: viewGeneral.centerYAnchor).isActive = true
     }
     
+    var sheetController = UIAlertController()
+    
+    func handleReportContentoptions () {
+        sheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        sheetController.addAction(UIAlertAction(title: "Reportar", style: .destructive, handler: { (_) in
+            let alert = UIAlertController(title: "", message: "Revisaremos tu reporte 🤔", preferredStyle: UIAlertControllerStyle.alert)
+            
+            alert.addAction(UIAlertAction(title: "¡Gracias!", style: UIAlertActionStyle.default, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
+        }))
+        
+        sheetController.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+        
+        
+        present(sheetController, animated: true, completion: nil)
+        
+    }
+    
     // define a variable to store initial touch position
     var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
     
@@ -373,6 +393,7 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
                 
                 self.containerView.profileImageView.loadImage(urlString: avatarUrl)
                 self.containerView.fullnameLabel.text = fullName
+                self.containerView.optionButton.addTarget(self, action: #selector(self.handleReportContentoptions), for: .touchUpInside)
                 
                 let duration = NSInteger(audioReview.duration)
                 let seconds = String(format: "%02d", duration % 60)

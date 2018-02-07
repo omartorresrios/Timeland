@@ -29,6 +29,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     var alertTap = UITapGestureRecognizer()
     var connectionTap = UITapGestureRecognizer()
     let userContentOptionsView = UserContentOptionsView()
+    var userFullnameSelected: String!
     
     let loader: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
@@ -282,7 +283,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: userContentOptionsView.viewContainer))! || (touch.view?.isDescendant(of: customAlertMessage))! {
+        if (touch.view?.isDescendant(of: userContentOptionsView.viewSupport))! || (touch.view?.isDescendant(of: customAlertMessage))! {
             return false
         }
         return true
@@ -420,9 +421,15 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
+    func blockUserView() {
+        let alert = UIAlertController(title: "", message: "Bloqueaste a \(self.userFullnameSelected!)", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     func setupUserInfoViewsContainers() {
         
-        userContentOptionsView.viewContainer.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
+        userContentOptionsView.viewSupport.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
         UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
             
             self.view.addSubview(self.userContentOptionsView)
@@ -443,11 +450,14 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
             let writeTap = UITapGestureRecognizer(target: self, action: #selector(self.showWriteReviewView))
             self.userContentOptionsView.writeReviewViewContainer.addGestureRecognizer(writeTap)
             
+            let blockTap = UITapGestureRecognizer(target: self, action: #selector(self.blockUserView))
+            self.userContentOptionsView.blockUserViewContainer.addGestureRecognizer(blockTap)
+            
             self.tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissContainerView))
             self.userContentOptionsView.viewGeneral.addGestureRecognizer(self.tap)
             self.tap.delegate = self
             
-            self.userContentOptionsView.viewContainer.transform = .identity
+            self.userContentOptionsView.viewSupport.transform = .identity
             
         }, completion: nil)
         
@@ -461,7 +471,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         
         let user = filteredUsers[indexPath.item]
         userSelected = user
-        
+        userFullnameSelected = user.fullname
         setupUserInfoViewsContainers()
     }
     

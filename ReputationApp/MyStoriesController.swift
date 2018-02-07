@@ -299,6 +299,24 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
     let previewVideoContainerView = PreviewVideoContainerView()
     var player = AVPlayer()
     var playerLayer = AVPlayerLayer()
+    var sheetController = UIAlertController()
+    
+    func handleReportContentoptions () {
+        sheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        sheetController.addAction(UIAlertAction(title: "Reportar", style: .destructive, handler: { (_) in
+            let alert = UIAlertController(title: "", message: "Revisaremos tu reporte 🤔", preferredStyle: UIAlertControllerStyle.alert)
+            
+            alert.addAction(UIAlertAction(title: "¡Gracias!", style: UIAlertActionStyle.default, handler: nil))
+            
+            self.previewVideoContainerView.present(alert, animated: true, completion: nil)
+        }))
+        
+        sheetController.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+        
+        previewVideoContainerView.present(sheetController, animated: true, completion: nil)
+        
+    }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: userFeedCell, for: indexPath) as! UserFeedCell
@@ -413,6 +431,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
                 
                 self.previewVideoContainerView.videoLengthLabel.text = timeLabel.text
                 self.previewVideoContainerView.userNameLabel.text = fullname
+                self.previewVideoContainerView.optionButton.addTarget(self, action: #selector(self.handleReportContentoptions), for: .touchUpInside)
                 
                 let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
                 self.previewVideoContainerView.view.addGestureRecognizer(tapGesture)
@@ -420,6 +439,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
                 NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem, queue: nil, using: { (_) in
                     DispatchQueue.main.async {
                         self.playerLayer.removeFromSuperlayer()
+                        self.sheetController.dismiss(animated: true, completion: nil)
                         self.previewVideoContainerView.dismiss(animated: false, completion: nil)
                     }
                 })

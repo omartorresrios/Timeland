@@ -43,6 +43,13 @@ class PreviewVideoContainerView: UIViewController {
         return image
     }()
     
+    let optionButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "dot_vertical_option").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+    
     func handleCancel() {
         view.removeFromSuperview()
     }
@@ -58,6 +65,10 @@ class PreviewVideoContainerView: UIViewController {
         
         view.addSubview(userNameLabel)
         userNameLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.addSubview(optionButton)
+        optionButton.anchor(top: nil, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 15, height: 15)
+        optionButton.centerYAnchor.constraint(equalTo: userNameLabel.centerYAnchor).isActive = true
         
         view.addSubview(videoLengthLabel)
         videoLengthLabel.anchor(top: userNameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

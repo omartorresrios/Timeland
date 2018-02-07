@@ -38,7 +38,17 @@ class UserContentOptionsView: UIView {
         return label
     }()
     
+    let blockLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
+        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.text = "Bloquear"
+        label.textAlignment = .left
+        return label
+    }()
+    
     let viewGeneral = UIView()
+    let viewSupport = UIView()
     let viewContainer = UIView()
     
     let storiesViewContainer: UIView = {
@@ -56,21 +66,31 @@ class UserContentOptionsView: UIView {
         return view
     }()
     
+    let blockUserViewContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
     func setupViews() {
         
         addSubview(self.viewGeneral)
         self.viewGeneral.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         self.viewGeneral.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
         
-        viewContainer.transform = CGAffineTransform(translationX: 0, y: self.frame.height)
+        viewSupport.transform = CGAffineTransform(translationX: 0, y: self.frame.height)
         UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-            self.viewGeneral.addSubview(self.viewContainer)
-            self.viewContainer.anchor(top: nil, left: self.viewGeneral.leftAnchor, bottom: nil, right: self.viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 150)
-            self.viewContainer.backgroundColor = .white
-            self.viewContainer.layer.cornerRadius = 5
-            self.viewContainer.centerYAnchor.constraint(equalTo: self.viewGeneral.centerYAnchor).isActive = true
-            self.viewContainer.transform = .identity
+            self.viewGeneral.addSubview(self.viewSupport)
+            self.viewSupport.anchor(top: nil, left: self.viewGeneral.leftAnchor, bottom: nil, right: self.viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 220)
+            self.viewSupport.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+            self.viewSupport.centerYAnchor.constraint(equalTo: self.viewGeneral.centerYAnchor).isActive = true
+            self.viewSupport.transform = .identity
         }, completion: nil)
+        
+        viewSupport.addSubview(viewContainer)
+        viewContainer.anchor(top: viewSupport.topAnchor, left: viewSupport.leftAnchor, bottom: nil, right: viewSupport.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150)
+        viewContainer.backgroundColor = .white
+        viewContainer.layer.cornerRadius = 5
         
         viewContainer.addSubview(storiesViewContainer)
         storiesViewContainer.anchor(top: viewContainer.topAnchor, left: viewContainer.leftAnchor, bottom: nil, right: viewContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150 / 3)
@@ -121,6 +141,24 @@ class UserContentOptionsView: UIView {
         
         writeLabel.anchor(top: nil, left: writeEmojiView.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         writeLabel.centerYAnchor.constraint(equalTo: writeEmojiView.centerYAnchor).isActive = true
+        
+        
+        
+        viewSupport.addSubview(blockUserViewContainer)
+        blockUserViewContainer.anchor(top: viewContainer.bottomAnchor, left: viewSupport.leftAnchor, bottom: nil, right: viewSupport.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        blockUserViewContainer.layer.cornerRadius = 5
+        
+        let blockEmojiView = UIImageView()
+        let blockEmoji = "🚫".image()
+        blockEmojiView.image = blockEmoji
+        
+        blockUserViewContainer.addSubview(blockEmojiView)
+        blockUserViewContainer.addSubview(blockLabel)
+        blockEmojiView.anchor(top: nil, left: blockUserViewContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        blockEmojiView.centerYAnchor.constraint(equalTo: blockUserViewContainer.centerYAnchor).isActive = true
+        
+        blockLabel.anchor(top: nil, left: blockEmojiView.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        blockLabel.centerYAnchor.constraint(equalTo: blockEmojiView.centerYAnchor).isActive = true
         
     }
     

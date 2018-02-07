@@ -49,6 +49,13 @@ class PreviewAudioContainerView: UIView {
         }
     }
     
+    let optionButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "dot_horizontal_option").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        return button
+    }()
+    
     let progressView: UIProgressView = {
         let progress = UIProgressView()
         return progress
@@ -87,6 +94,10 @@ class PreviewAudioContainerView: UIView {
         addSubview(playButton)
         playButton.anchor(top: profileImageView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
         playButton.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+        
+        addSubview(optionButton)
+        optionButton.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 15, height: 15)
+        optionButton.centerYAnchor.constraint(equalTo: fullnameLabel.centerYAnchor).isActive = true
         
         addSubview(progressView)
         progressView.anchor(top: nil, left: playButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
