@@ -34,7 +34,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
     let closeView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
-        view.backgroundColor = UIColor.rgb(red: 49, green: 233, blue: 129)
+        view.backgroundColor = UIColor.mainGreen()
         return view
     }()
     
@@ -55,7 +55,7 @@ class UserStoriesController: UICollectionViewController, UICollectionViewDelegat
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         return label
     }()
     

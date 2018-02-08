@@ -34,7 +34,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
     let closeView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
-        view.backgroundColor = UIColor.rgb(red: 49, green: 233, blue: 129)
+        view.backgroundColor = UIColor.mainGreen()
         return view
     }()
     
@@ -56,7 +56,7 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
         label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         return label
     }()
     
@@ -447,8 +447,6 @@ class MyStoriesController: UICollectionViewController, UICollectionViewDelegateF
             } else {
                 self.showCustomAlertMessage(image: "😕".image(), message: "¡Revisa tu conexión de internet e intenta de nuevo!", isForLoadUsers: false)
             }
-            
-            
         }
         
         return cell

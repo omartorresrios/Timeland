@@ -26,7 +26,7 @@ class CustomAlertMessage: UIView {
     
     let labelMessage: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 16)
         label.textAlignment = .center
         label.numberOfLines = 0

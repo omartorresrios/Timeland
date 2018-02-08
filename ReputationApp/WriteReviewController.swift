@@ -43,9 +43,19 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         }
     }
     
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Deja una reseña"
+        label.font = UIFont(name: "SFUIDisplay-Medium", size: 16)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+    
     var startRecordButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .gray
+        button.tintColor = .white
         button.addTarget(self, action: #selector(startRecord), for: .touchUpInside)
         button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
         return button
@@ -72,7 +82,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     
     let sendSuccesView: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
+        view.backgroundColor = UIColor.mainGreen()
         view.layer.cornerRadius = 25
         return view
     }()
@@ -85,12 +95,15 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     
     var progressView: UIProgressView = {
         let progress = UIProgressView()
+        progress.progressTintColor = UIColor.mainGreen()
+        progress.tintColor = .white
+        progress.trackTintColor = .white
         return progress
     }()
     
     var playAudioButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .gray
+        button.tintColor = .white
         button.addTarget(self, action: #selector(playAudio), for: .touchUpInside)
         button.setImage(#imageLiteral(resourceName: "play").withRenderingMode(.alwaysTemplate), for: .normal)
         return button
@@ -99,7 +112,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     let sendView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 20
-        view.backgroundColor = .green
+        view.backgroundColor = UIColor.mainGreen()
         return view
     }()
     
@@ -115,16 +128,26 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0:00"
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = .white
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .right
         return label
     }()
     
+    let supportView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.grayLow()
+        view.layer.cornerRadius = 8
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.grayHigh()
+        
+        view.addSubview(titleLabel)
+        titleLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
         
         let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler(_:)))
         view.addGestureRecognizer(tapGesture)
@@ -187,7 +210,7 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     
     func addSendButton() {
         view.addSubview(sendView)
-        sendView.anchor(top: playAudioButton.bottomAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 20, width: 40, height: 40)
+        sendView.anchor(top: supportView.bottomAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 12, paddingLeft: 0, paddingBottom: 0, paddingRight: 12, width: 40, height: 40)
         sendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sendAudio)))
         
         sendView.addSubview(sendButton)
@@ -199,17 +222,22 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
     func addPlayerView(isShowing: Bool) {
         if isShowing == true {
             DispatchQueue.main.async {
-                self.view.addSubview(self.playAudioButton)
-                self.playAudioButton.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
-                self.playAudioButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                
+                self.view.addSubview(self.supportView)
+                self.supportView.anchor(top: nil, left: self.view.leftAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 0, paddingRight: 12, width: 0, height: 50)
+                self.supportView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+                
+                self.supportView.addSubview(self.playAudioButton)
+                self.playAudioButton.anchor(top: nil, left: self.supportView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
+                self.playAudioButton.centerYAnchor.constraint(equalTo: self.supportView.centerYAnchor).isActive = true
                 self.playAudioButton.adjustsImageWhenHighlighted = false
                 
-                self.view.addSubview(self.progressView)
+                self.supportView.addSubview(self.progressView)
                 self.progressView.anchor(top: nil, left: self.playAudioButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
                 self.progressView.centerYAnchor.constraint(equalTo: self.playAudioButton.centerYAnchor).isActive = true
                 
-                self.view.addSubview(self.audioLength)
-                self.audioLength.anchor(top: nil, left: self.progressView.rightAnchor, bottom: nil, right: self.view.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+                self.supportView.addSubview(self.audioLength)
+                self.audioLength.anchor(top: nil, left: self.progressView.rightAnchor, bottom: nil, right: self.supportView.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
                 self.audioLength.centerYAnchor.constraint(equalTo: self.playAudioButton.centerYAnchor).isActive = true
                 
                 let duration = NSInteger(self.actualReview.duration)
@@ -223,21 +251,19 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
             
         } else {
             DispatchQueue.main.async {
-                self.playAudioButton.removeFromSuperview()
-                self.progressView.removeFromSuperview()
-                self.audioLength.removeFromSuperview()
+                self.supportView.removeFromSuperview()
             }
         }
     }
     
     func startRecord() {
         DispatchQueue.main.async {
-            self.startRecordButton.tintColor = .red
+            self.startRecordButton.tintColor = UIColor.mainGreen()
         }
         
         if AudioBot.recording {
             DispatchQueue.main.async {
-                self.startRecordButton.tintColor = .gray
+                self.startRecordButton.tintColor = .white
             }
             AudioBot.stopRecord { [weak self] fileURL, duration, decibelSamples in
                 print("fileURL: \(fileURL)")
@@ -257,14 +283,12 @@ class WriteReviewController: UIViewController, UITextViewDelegate, AVAudioRecord
             
         } else {
             
-            startRecordButton.tintColor = .red
+            startRecordButton.tintColor = UIColor.mainGreen()
             
-            if self.view.subviews.contains(sendView) && self.view.subviews.contains(playAudioButton) && self.view.subviews.contains(progressView) && self.view.subviews.contains(audioLength) {
+            if self.view.subviews.contains(supportView) && self.view.subviews.contains(sendView) {
                 print("HAY ELEMENTOS")
                 DispatchQueue.main.async {
-                    self.playAudioButton.removeFromSuperview()
-                    self.progressView.removeFromSuperview()
-                    self.audioLength.removeFromSuperview()
+                    self.supportView.removeFromSuperview()
                     self.sendView.removeFromSuperview()
                 }
             } else {

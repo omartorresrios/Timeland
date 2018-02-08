@@ -41,7 +41,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     let messageLabel: UILabel = {
         let ml = UILabel()
         ml.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
-        ml.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        ml.textColor = UIColor.grayLow()
         ml.numberOfLines = 0
         ml.textAlignment = .center
         return ml
@@ -56,7 +56,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     let searchButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "record").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.rgb(red: 49, green: 233, blue: 129)
+        button.tintColor = UIColor.mainGreen()
         button.addTarget(self, action: #selector(recordAudio(_:)), for: .touchUpInside)
         return button
     }()
@@ -126,8 +126,8 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     
     func animateRecordButton() {
         DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.5, delay: 0.0, options:[.repeat, .autoreverse], animations: {
-                self.searchButton.tintColor = UIColor.rgb(red: 255, green: 255, blue: 15)
+            UIView.animate(withDuration: 1.0, delay: 0.0, options:[.repeat, .autoreverse], animations: {
+                self.searchButton.tintColor = UIColor.rgb(red: 125, green: 125, blue: 225)
             }, completion:  nil)
         }
     }
@@ -215,7 +215,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
         if filteredUsers.isEmpty {
             messageLabel.isHidden = false
             messageLabel.text = "🙁 No encontramos a esa persona."
-            searchButton.tintColor = .gray
+            searchButton.tintColor = UIColor.mainGreen()
             loader.stopAnimating()
         } else {
             messageLabel.isHidden = true
@@ -277,7 +277,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
     func dismissAlertMessage() {
         supportAlertView.removeFromSuperview()
         resetAudio()
-        searchButton.tintColor = .gray
+        searchButton.tintColor = UIColor.mainGreen()
         collectionView.backgroundColor = .white
         supportAlertView.removeGestureRecognizer(alertTap)
     }
@@ -318,7 +318,7 @@ class UserSearchController: UIViewController, UICollectionViewDelegate, UICollec
                     
                     self?.loader.startAnimating()
                     self?.loader.isHidden = false
-                    self?.searchButton.tintColor = UIColor.rgb(red: 49, green: 233, blue: 129)
+                    self?.searchButton.tintColor = UIColor.mainGreen()
                     
                     var finished = false
                     print(response)

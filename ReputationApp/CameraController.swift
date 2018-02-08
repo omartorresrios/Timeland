@@ -82,7 +82,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     
     let sendSuccesView: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
+        view.backgroundColor = UIColor.mainGreen()
         view.layer.cornerRadius = 25
         return view
     }()
@@ -90,7 +90,7 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
     let sendView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 45 / 2
-        view.backgroundColor = .green
+        view.backgroundColor = UIColor.mainGreen()
         return view
     }()
     
@@ -534,11 +534,21 @@ class CameraController: SwiftyCamViewController, SwiftyCamViewControllerDelegate
             self.swiftyCamButton.removeFromSuperview()
         }
         
-        player = AVPlayer(url: secondaryUrl)
-        playerLayer = AVPlayerLayer(player: player)
-        playerLayer.frame = view.bounds
-        view.layer.addSublayer(playerLayer)
-        player.play()
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.mixWithOthers)
+            
+            player = AVPlayer(url: secondaryUrl)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer.frame = view.bounds
+            view.layer.addSublayer(playerLayer)
+            player.play()
+        } catch {
+            print("Some error to reproduce video")
+        }
+        
+        
+        
+        
         
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: nil, using: { (_) in
             DispatchQueue.main.async {

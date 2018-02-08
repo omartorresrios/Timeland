@@ -34,14 +34,14 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
         label.font = UIFont(name: "SFUIDisplay-Regular", size: 15)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         return label
     }()
     
     let closeView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
-        view.backgroundColor = UIColor.rgb(red: 49, green: 233, blue: 129)
+        view.backgroundColor = UIColor.mainGreen()
         return view
     }()
     
@@ -274,7 +274,7 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
     func setupReviewInfoViews() {
         view.addSubview(viewGeneral)
         viewGeneral.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        viewGeneral.backgroundColor = .black
+        viewGeneral.backgroundColor = UIColor.grayHigh()
         
         let tapGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureRecognizerHandler(_:)))
         viewGeneral.addGestureRecognizer(tapGesture)
@@ -282,7 +282,6 @@ class MyReviewsController: UICollectionViewController, UICollectionViewDelegateF
         viewGeneral.addSubview(containerView)
         let height: CGFloat = 25 + 44
         containerView.anchor(top: nil, left: viewGeneral.leftAnchor, bottom: nil, right: viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: height)
-        containerView.backgroundColor = .white
         containerView.layer.cornerRadius = 5
         containerView.centerYAnchor.constraint(equalTo: viewGeneral.centerYAnchor).isActive = true
     }

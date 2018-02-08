@@ -30,7 +30,7 @@ class UserFeedCell: UICollectionViewCell {
     
     let playButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "play2").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "play").withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .white
         
         return button

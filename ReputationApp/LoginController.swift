@@ -26,6 +26,13 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         return view
     }()
     
+    let logoImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "dots_logo")
+        iv.contentMode = .scaleAspectFill
+        return iv
+    }()
+    
     let customLoginButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "logo_google").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -62,7 +69,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor.mainGreen()
         
         var error: NSError?
         
@@ -75,6 +82,10 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate,
         
         GIDSignIn.sharedInstance().uiDelegate = self
         GIDSignIn.sharedInstance().delegate = self
+        
+        view.addSubview(logoImageView)
+        logoImageView.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 40, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 80, height: 80)
+        logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupCustomLoginButton()
         

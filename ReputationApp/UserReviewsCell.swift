@@ -14,7 +14,7 @@ class UserReviewsCell: UICollectionViewCell {
     
     let fullnameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 15)
         label.textAlignment = .center
         return label

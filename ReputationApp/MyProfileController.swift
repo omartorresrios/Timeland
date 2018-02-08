@@ -17,27 +17,27 @@ class MyProfileController: UIViewController {
     
     let storiesOptionButton: UIButton = {
         let button = UIButton(type: .system)
-//        button.backgroundColor = .white
-        button.layer.borderWidth = 3
+//        button.backgroundColor = UIColor.white
+        button.layer.borderWidth = 2
         button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Momentos", for: .normal)
-        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 16)
+        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 17)
         button.addTarget(self, action: #selector(showUserStoriesView), for: .touchUpInside)
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = 8
         return button
     }()
     
     let reviewsOptionButton: UIButton = {
         let button = UIButton(type: .system)
-//        button.backgroundColor = .white
-        button.layer.borderWidth = 3
+//        button.backgroundColor = UIColor.white
+        button.layer.borderWidth = 2
         button.layer.borderColor = UIColor.white.cgColor
         button.tintColor = .white
         button.setTitle("Reseñas", for: .normal)
-        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 16)
+        button.titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 17)
         button.addTarget(self, action: #selector(showUserReviewsView), for: .touchUpInside)
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = 8
         return button
     }()
     
@@ -88,7 +88,7 @@ class MyProfileController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        view.backgroundColor = UIColor.grayLow()
         navigationController?.navigationBar.isHidden = true
         
         setupUserInfo()
@@ -140,7 +140,7 @@ class MyProfileController: UIViewController {
         stackView.distribution = .fillEqually
         
         view.addSubview(stackView)
-        stackView.anchor(top: fullnameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 110)
+        stackView.anchor(top: fullnameLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 130)
         stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     

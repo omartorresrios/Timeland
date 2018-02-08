@@ -14,7 +14,7 @@ class UserContentOptionsView: UIView {
     let storiesLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.text = "Momentos"
         label.textAlignment = .left
         return label
@@ -23,7 +23,7 @@ class UserContentOptionsView: UIView {
     let reviewsLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.text = "Reseñas"
         label.textAlignment = .left
         return label
@@ -32,7 +32,7 @@ class UserContentOptionsView: UIView {
     let writeLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.text = "Deja una reseña"
         label.textAlignment = .left
         return label
@@ -41,7 +41,7 @@ class UserContentOptionsView: UIView {
     let blockLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = UIColor.grayLow()
         label.text = "Bloquear"
         label.textAlignment = .left
         return label
@@ -76,13 +76,13 @@ class UserContentOptionsView: UIView {
         
         addSubview(self.viewGeneral)
         self.viewGeneral.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        self.viewGeneral.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        self.viewGeneral.backgroundColor = UIColor.grayHigh()
         
         viewSupport.transform = CGAffineTransform(translationX: 0, y: self.frame.height)
         UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
             self.viewGeneral.addSubview(self.viewSupport)
             self.viewSupport.anchor(top: nil, left: self.viewGeneral.leftAnchor, bottom: nil, right: self.viewGeneral.rightAnchor, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 220)
-            self.viewSupport.backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+            self.viewSupport.backgroundColor = UIColor.grayLow()
             self.viewSupport.centerYAnchor.constraint(equalTo: self.viewGeneral.centerYAnchor).isActive = true
             self.viewSupport.transform = .identity
         }, completion: nil)

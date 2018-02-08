@@ -12,7 +12,7 @@ class PreviewAudioContainerView: UIView {
     
     let fullnameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = .white
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .left
         return label
@@ -31,8 +31,7 @@ class PreviewAudioContainerView: UIView {
         let image = UIImage(named: "play")
         button.setImage(image, for: UIControlState())
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .black
-        //        button.addTarget(self, action: #selector(handlePause), for: .touchUpInside)
+        button.tintColor = .white
         button.addTarget(self, action: #selector(playAudio), for: .touchUpInside)
         return button
     }()
@@ -52,12 +51,15 @@ class PreviewAudioContainerView: UIView {
     let optionButton: UIButton = {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "dot_horizontal_option").withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        button.tintColor = .white
         return button
     }()
     
     let progressView: UIProgressView = {
         let progress = UIProgressView()
+        progress.progressTintColor = UIColor.mainGreen()
+        progress.tintColor = .white
+        progress.trackTintColor = .white
         return progress
     }()
     
@@ -76,13 +78,15 @@ class PreviewAudioContainerView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0:00"
-        label.textColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+        label.textColor = .white
         label.font = UIFont(name: "SFUIDisplay-Medium", size: 14)
         label.textAlignment = .right
         return label
     }()
     
     func setupViews() {
+        
+        backgroundColor = UIColor.grayLow()
         
         addSubview(profileImageView)
         profileImageView.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 25, height: 25)
